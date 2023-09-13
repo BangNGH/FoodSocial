@@ -49,7 +49,7 @@ public class PostsService implements TableService{
     }
 
     public List<Posts> search(String q) {
-        if (q != null) {
+        if (!q.isBlank()) {
             List<Ingredients> ingredientsList = postsRepository.searchByIngredients(q);
             List<Posts> postFound = postsRepository.search(q);
 
@@ -75,8 +75,6 @@ public class PostsService implements TableService{
         }
         List<Posts> posts = this.getList();
         List<Posts> randomPosts = getRandomPosts(posts, 3);
-
-
         return randomPosts;
     }
     private List<Posts> getRandomPosts(List<Posts> sourceList, int n) {

@@ -109,7 +109,7 @@
                     </div>
                     <div class="col-md-6">
                       <div class="input-item input-item-name ltn__custom-icon">
-                        <input style="height: 65px" th:field="*{gender}" readonly type="text" name="ltn__lastname" placeholder="Username">
+                        <input style="height: 65px" required name="address" id="address" type="text" placeholder="Địa chỉ nhận hàng">
                       </div>
                     </div>
                     <div class="col-md-6">
@@ -123,19 +123,6 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col-lg-12 col-md-12">
-                      <h6>Địa chỉ</h6>
-                      <div class="row">
-                        <div class="col-md-6">
-                          <div class="input-item">
-                            <input style="height: 65px" required name="address" id="address" type="text" placeholder="Địa chỉ nhận hàng">
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
                   <div class="form-group row" style="margin-bottom: 15px;margin-top: 15px;">
                     <h6 class="col-sm-4 col-form-label">Chọn địa chỉ:</h6>
                     <div class="col-sm-8">
@@ -164,31 +151,54 @@
             <h4 class="title-2">Phương thức thanh toán (chọn 1 phương thưc thanh toán)</h4>
             <div id="checkout_accordion_1">
               <div class="card">
-                <label style="font-weight: bold; font-size: 16px" class="ltn__card-title" data-bs-toggle="collapse" data-bs-target="#faq-item-2-2" aria-expanded="true">
+                <label style="font-weight: bold; font-size: 16px" class="ltn__card-title">
                   Thanh toán khi nhận hàng
                   <img th:src="@{/client_assets/shop_assets/img/icons/cash.png}" alt="#">
-                  <input style="display:none;" type="checkbox" checked name="cash">
+                  <input type="radio" checked name="payOption" value="cash">
                 </label>
-                <div id="faq-item-2-2" class="collapse show" data-parent="#checkout_accordion_1">
+                <div id="faq-item-2-2" class="collapse">
                   <div class="card-body">
                     <p>Thanh toán bằng tiền mặt khi nhận hàng</p>
                   </div>
                 </div>
               </div>
               <div class="card">
-                <label style="font-weight: bold; font-size: 16px" class="collapsed ltn__card-title" data-bs-toggle="collapse" data-bs-target="#faq-item-2-4" aria-expanded="false" >
+                <label style="font-weight: bold; font-size: 16px" class="collapsed ltn__card-title" >
                   Thanh toán qua PayPal
-                  <img th:src="@{/client_assets/shop_assets/img/icons/payment-3.png}" alt="#">
-                  <input style="display:none;" type="checkbox" name="paypal">
+                  <img style="margin-right: 30px" th:src="@{/client_assets/shop_assets/img/icons/payment-3.png}" alt="#">
+                  <input type="radio" name="payOption" value="paypal">
                 </label>
-                <div id="faq-item-2-4" class="collapse" data-parent="#checkout_accordion_1">
+                <div class="collapse">
                   <div class="card-body">
-                    <p>Thanh toán qua PayPal, bạn có thể thanh toán bằng thẻ tín dụng nếu bạn không có tài khoản PayPal.</p>
+                    <p>Thanh toán qua PayPal, bạn có thể thanh toán qua Momo, VnPay nếu bạn không có tài khoản PayPal.</p>
                   </div>
                 </div>
               </div>
-              <div style="margin-top: 5px" th:if="${message}" class="alert alert-danger">
-                Vui lòng chọn 1 phương thức thanh toán: thanh toán khi nhận hàng hoặc qua paypal!
+              <div class="card">
+                <label style="font-weight: bold; font-size: 16px" class="collapsed ltn__card-title" >
+                  Thanh toán qua Momo
+                  <img style="margin-right: 30px" th:src="@{/client_assets/shop_assets/img/icons/momo.png}" alt="#">
+                  <input type="radio" name="payOption" value="momo">
+                </label>
+                <div class="collapse">
+                  <div class="card-body">
+                    <p>Thanh toán qua Momo, bạn có thể thanh toán qua VNPay, Paypal nếu bạn không có tài khoản Momo.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <label style="font-weight: bold; font-size: 16px" class="collapsed ltn__card-title">
+                  Thanh toán qua VNPay
+                  <img th:src="@{/client_assets/shop_assets/img/icons/vnpay.png}" alt="#">
+                  <input type="radio" value="vnpay" name="payOption">
+                </label>
+                <div class="collapse">
+                  <div class="card-body">
+                    <p>Thanh toán qua VNPay, bạn có thể thanh toán qua Momo, Paypal nếu bạn không có tài khoản VNPay.</p>
+                  </div>
+                </div>
+              </div>
+              <div style="margin-top: 5px" th:if="${message}" class="alert alert-danger" th:text="${message}">
               </div>
             </div>
             <div class="ltn__payment-note mt-30 mb-30">
@@ -223,9 +233,9 @@
 
   <script th:src="@{/webjars/jquery/3.6.4/jquery.min.js}"></script>
   <!-- All JS Plugins -->
-<!--  <script th:src="@{/client_assets/shop_assets/js/plugins.js}"></script>-->
-<!--  &lt;!&ndash; Main JS &ndash;&gt;-->
-<!--  <script th:src="@{/client_assets/shop_assets/js/main.js}"></script>-->
+  <!--  <script th:src="@{/client_assets/shop_assets/js/plugins.js}"></script>-->
+  <!--  &lt;!&ndash; Main JS &ndash;&gt;-->
+  <!--  <script th:src="@{/client_assets/shop_assets/js/main.js}"></script>-->
   <script type="text/javascript">
     function getCurrentLocation() {
       if (navigator.geolocation) {
@@ -243,18 +253,18 @@
       var nominatimApiUrl = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + userLatitude + "&lon=" + userLongitude;
 
 
-        $.ajax({
-          url: nominatimApiUrl,
-          type: "GET",
-          dataType: "json",
-          success: function (response) {
-            var address = response.display_name;
-            document.getElementById("address").value = address;
-          },
-          error: function (xhr, status, error) {
-            console.log("Error: " + error);
-          }
-        });
+      $.ajax({
+        url: nominatimApiUrl,
+        type: "GET",
+        dataType: "json",
+        success: function (response) {
+          var address = response.display_name;
+          document.getElementById("address").value = address;
+        },
+        error: function (xhr, status, error) {
+          console.log("Error: " + error);
+        }
+      });
 
     }
   </script>
