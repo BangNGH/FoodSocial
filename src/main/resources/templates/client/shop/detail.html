@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/client_layout}"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${product.name}"></title>
+    <!-- Place favicon.png in the root directory -->
+    <link rel="shortcut icon" th:href="@{/client_assets/shop_assets//client_assets/shop_assets/img/favicon.png}" type="image/x-icon"/>
+    <!-- Font Icons css -->
+    <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/font-icons.css}">
+    <!-- plugins css -->
+    <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/plugins.css}">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/style.css}">
+    <!-- Responsive css -->
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- BREADCRUMB AREA START -->
+    <div class="ltn__breadcrumb-area ltn__breadcrumb-area-2 ltn__breadcrumb-color-white bg-overlay-theme-black-90 bg-image"
+         th:attr="data-bg=@{/client_assets/shop_assets/img/bg/9.jpg}">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ltn__breadcrumb-inner ltn__breadcrumb-inner-2 justify-content-between">
+                        <div class="section-title-area ltn__section-title-2">
+                            <h6 class="section-subtitle ltn__secondary-color">// Welcome to our company</h6>
+                            <h1 class="section-title white-color" th:text="${product.name}"></h1>
+                        </div>
+                        <div class="ltn__breadcrumb-list">
+                            <ul>
+                                <li><a href="/">Trang chủ</a></li>
+                                <li th:text="${product.name}"></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- BREADCRUMB AREA END -->
+
+    <!-- SHOP DETAILS AREA START -->
+    <div class="ltn__shop-details-area pb-85">
+        <div class="container">
+            <div class="row">
+                <div th:object="${product}" class="col-lg-8 col-md-12">
+                    <div class="ltn__shop-details-inner mb-60">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="ltn__shop-details-img-gallery">
+                                    <div class="ltn__shop-details-large-img">
+                                        <div class="single-large-img">
+                                            <a th:href="@{${product.imagesPath}}" data-rel="lightcase:myCollection">
+                                                <img th:src="@{${product.imagesPath}}" alt="Image">
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="ltn__shop-details-small-img slick-arrow-2">
+                                        <div class="single-small-img">
+                                            <img th:src="@{${product.imagesPath}}" alt="Image">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="modal-product-info shop-details-info pl-0">
+                                    <div class="product-ratting">
+                                        <ul>
+                                            <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                            <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                            <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                            <li><a href="#"><i class="fas fa-star-half-alt"></i></a></li>
+                                            <li><a href="#"><i class="far fa-star"></i></a></li>
+                                            <li class="review-total"><a href="#"> ( 95 Reviews )</a></li>
+                                        </ul>
+                                    </div>
+                                    <h3 th:text="${product.name}"></h3>
+                                    <div class="product-price">
+                                        <span><span
+                                                th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')}"></span> VNĐ</span>
+                                        <!--                                        <del>$65.00</del>-->
+                                    </div>
+                                    <div class="modal-product-meta ltn__product-details-menu-1">
+                                        <ul>
+                                            <li>
+                                                <strong style="min-width: unset">Categories:</strong>
+                                                <span th:each="temp:${categories}">
+                                                    <a style="margin-right: 0"
+                                                       th:href="@{/product/category/{id}(id=${temp.id})}"
+                                                       th:text="${temp.name}"></a>
+                                                    <span th:if="${!tempStat.last}">,</span>
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <form>
+                                        <input type="hidden" name="id" th:value="${product.id}">
+                                        <div class="ltn__product-details-menu-2">
+                                            <ul>
+                                                <li>
+                                                    <div class="cart-plus-minus">
+                                                        <input type="text" value="01" name="quantity"
+                                                               class="cart-plus-minus-box" id="quantity">
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <a class="theme-btn-1 btn btn-effect-1" title="Add to Cart"
+                                                       href="#" data-bs-toggle="modal" data-bs-target="#add_to_cart_modal"
+                                                       th:onclick="'addToCart(\'' + ${product.id} + '\')'">
+                                                        <i class="fas fa-shopping-cart"></i>
+                                                        <span>ADD TO CART</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </form>
+<!--                                    <div class="ltn__product-details-menu-3">-->
+<!--                                        <ul>-->
+<!--                                            <li>-->
+<!--                                                <a href="#" class="" title="Wishlist" data-bs-toggle="modal" data-bs-target="#liton_wishlist_modal">-->
+<!--                                                    <i class="far fa-heart"></i>-->
+<!--                                                    <span>Add to Wishlist</span>-->
+<!--                                                </a>-->
+<!--                                            </li>-->
+<!--                                        </ul>-->
+<!--                                    </div>-->
+                                    <hr>
+                                    <div class="ltn__social-media">
+                                        <ul>
+                                            <li>Share:</li>
+                                            <li><a href="https://www.facebook.com/profile.php?id=100046162681296"
+                                                   title="Facebook"><i class="fab fa-facebook-f"></i></a></li>
+                                            <li><a href="#" title="Twitter"><i class="fab fa-twitter"></i></a></li>
+                                            <li><a href="#" title="Linkedin"><i class="fab fa-linkedin"></i></a></li>
+                                            <li><a href="#" title="Instagram"><i class="fab fa-instagram"></i></a></li>
+
+                                        </ul>
+                                    </div>
+                                    <hr>
+                                    <div class="ltn__safe-checkout">
+                                        <h5>Guaranteed Safe Checkout</h5>
+                                        <img th:src="@{/client_assets/shop_assets/img/icons/payment-2.png}" alt="Payment Image">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Shop Tab Start -->
+                    <div class="ltn__shop-details-tab-inner ltn__shop-details-tab-inner-2">
+                        <div class="ltn__shop-details-tab-menu">
+                            <div class="nav">
+                                <a class="active show" data-bs-toggle="tab"
+                                   href="#liton_tab_details_1_1">Mô tả sản phẩm</a>
+<!--                                <a data-bs-toggle="tab" href="#liton_tab_details_1_2" class="">Reviews</a>-->
+                            </div>
+                        </div>
+                        <div class="tab-content">
+                            <div class="tab-pane fade active show" id="liton_tab_details_1_1">
+                                <div class="ltn__shop-details-tab-content-inner">
+                                    <h4 class="title-2" th:text="${product.description}"></h4>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="liton_tab_details_1_2">
+                                <div class="ltn__shop-details-tab-content-inner">
+                                    <h4 class="title-2">Customer Reviews</h4>
+                                    <div class="product-ratting">
+                                        <ul>
+                                            <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                            <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                            <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                            <li><a href="#"><i class="fas fa-star-half-alt"></i></a></li>
+                                            <li><a href="#"><i class="far fa-star"></i></a></li>
+                                            <li class="review-total"><a href="#"> ( 95 Reviews )</a></li>
+                                        </ul>
+                                    </div>
+                                    <hr>
+                                    <!-- comment-area -->
+                                    <div class="ltn__comment-area mb-30">
+                                        <div class="ltn__comment-inner">
+                                            <ul>
+                                                <li>
+                                                    <div class="ltn__comment-item clearfix">
+                                                        <div class="ltn__commenter-img">
+                                                            <img src="client_assets/shop_assets/img/testimonial/1.jpg" alt="Image">
+                                                        </div>
+                                                        <div class="ltn__commenter-comment">
+                                                            <h6><a href="#">Adam Smit</a></h6>
+                                                            <div class="product-ratting">
+                                                                <ul>
+                                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                                    <li><a href="#"><i class="fas fa-star-half-alt"></i></a>
+                                                                    </li>
+                                                                    <li><a href="#"><i class="far fa-star"></i></a></li>
+                                                                </ul>
+                                                            </div>
+                                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                                                                Doloribus, omnis fugit corporis iste magnam ratione.</p>
+                                                            <span class="ltn__comment-reply-btn">September 3, 2020</span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="ltn__comment-item clearfix">
+                                                        <div class="ltn__commenter-img">
+                                                            <img src="client_assets/shop_assets/img/testimonial/3.jpg" alt="Image">
+                                                        </div>
+                                                        <div class="ltn__commenter-comment">
+                                                            <h6><a href="#">Adam Smit</a></h6>
+                                                            <div class="product-ratting">
+                                                                <ul>
+                                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                                    <li><a href="#"><i class="fas fa-star-half-alt"></i></a>
+                                                                    </li>
+                                                                    <li><a href="#"><i class="far fa-star"></i></a></li>
+                                                                </ul>
+                                                            </div>
+                                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                                                                Doloribus, omnis fugit corporis iste magnam ratione.</p>
+                                                            <span class="ltn__comment-reply-btn">September 2, 2020</span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="ltn__comment-item clearfix">
+                                                        <div class="ltn__commenter-img">
+                                                            <img src="client_assets/shop_assets/img/testimonial/2.jpg" alt="Image">
+                                                        </div>
+                                                        <div class="ltn__commenter-comment">
+                                                            <h6><a href="#">Adam Smit</a></h6>
+                                                            <div class="product-ratting">
+                                                                <ul>
+                                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                                    <li><a href="#"><i class="fas fa-star-half-alt"></i></a>
+                                                                    </li>
+                                                                    <li><a href="#"><i class="far fa-star"></i></a></li>
+                                                                </ul>
+                                                            </div>
+                                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                                                                Doloribus, omnis fugit corporis iste magnam ratione.</p>
+                                                            <span class="ltn__comment-reply-btn">September 2, 2020</span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <!-- comment-reply -->
+                                    <div class="ltn__comment-reply-area ltn__form-box mb-30">
+                                        <form action="#">
+                                            <h4 class="title-2">Add a Review</h4>
+                                            <div class="mb-30">
+                                                <div class="add-a-review">
+                                                    <h6>Your Ratings:</h6>
+                                                    <div class="product-ratting">
+                                                        <ul>
+                                                            <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                            <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                            <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                            <li><a href="#"><i class="fas fa-star-half-alt"></i></a>
+                                                            </li>
+                                                            <li><a href="#"><i class="far fa-star"></i></a></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="input-item input-item-textarea ltn__custom-icon">
+                                                <textarea placeholder="Type your comments...."></textarea>
+                                            </div>
+                                            <div class="input-item input-item-name ltn__custom-icon">
+                                                <input type="text" placeholder="Type your name....">
+                                            </div>
+                                            <div class="input-item input-item-email ltn__custom-icon">
+                                                <input type="email" placeholder="Type your email....">
+                                            </div>
+                                            <div class="input-item input-item-website ltn__custom-icon">
+                                                <input type="text" name="website" placeholder="Type your website....">
+                                            </div>
+                                            <label class="mb-0"><input type="checkbox" name="agree"> Save my name,
+                                                email, and website in this browser for the next time I comment.</label>
+                                            <div class="btn-wrapper">
+                                                <button class="btn theme-btn-1 btn-effect-1 text-uppercase"
+                                                        type="submit">Submit
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Shop Tab End -->
+                </div>
+                <div class="col-lg-4">
+                    <aside class="sidebar ltn__shop-sidebar ltn__right-sidebar">
+                        <!-- Top Rated Product Widget -->
+<!--                        <div class="widget ltn__top-rated-product-widget">-->
+<!--                            <h4 class="ltn__widget-title ltn__widget-title-border">Top Rated Product</h4>-->
+<!--                            <ul>-->
+<!--                                <li>-->
+<!--                                    <div class="top-rated-product-item clearfix">-->
+<!--                                        <div class="top-rated-product-img">-->
+<!--                                            <a href="#"><img th:src="@{/client_assets/shop_assets/img/product/1.png}" alt="#"></a>-->
+<!--                                        </div>-->
+<!--                                        <div class="top-rated-product-info">-->
+<!--                                            <div class="product-ratting">-->
+<!--                                                <ul>-->
+<!--                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>-->
+<!--                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>-->
+<!--                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>-->
+<!--                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>-->
+<!--                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>-->
+<!--                                                </ul>-->
+<!--                                            </div>-->
+<!--                                            <h6><a href="#">Mixel Solid Seat Cover</a></h6>-->
+<!--                                            <div class="product-price">-->
+<!--                                                <span>$49.00</span>-->
+<!--                                                <del>$65.00</del>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </li>-->
+<!--                                <li>-->
+<!--                                    <div class="top-rated-product-item clearfix">-->
+<!--                                        <div class="top-rated-product-img">-->
+<!--                                            <a href="#"><img th:src="@{/client_assets/shop_assets/img/product/2.png}" alt="#"></a>-->
+<!--                                        </div>-->
+<!--                                        <div class="top-rated-product-info">-->
+<!--                                            <div class="product-ratting">-->
+<!--                                                <ul>-->
+<!--                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>-->
+<!--                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>-->
+<!--                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>-->
+<!--                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>-->
+<!--                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>-->
+<!--                                                </ul>-->
+<!--                                            </div>-->
+<!--                                            <h6><a href="product-details.html">Vegetables Juices</a></h6>-->
+<!--                                            <div class="product-price">-->
+<!--                                                <span>$49.00</span>-->
+<!--                                                <del>$65.00</del>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </li>-->
+<!--                                <li>-->
+<!--                                    <div class="top-rated-product-item clearfix">-->
+<!--                                        <div class="top-rated-product-img">-->
+<!--                                            <a href="#"><img th:src="@{/client_assets/shop_assets/img/product/3.png}" alt="#"></a>-->
+<!--                                        </div>-->
+<!--                                        <div class="top-rated-product-info">-->
+<!--                                            <div class="product-ratting">-->
+<!--                                                <ul>-->
+<!--                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>-->
+<!--                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>-->
+<!--                                                    <li><a href="#"><i class="fas fa-star"></i></a></li>-->
+<!--                                                    <li><a href="#"><i class="fas fa-star-half-alt"></i></a></li>-->
+<!--                                                    <li><a href="#"><i class="far fa-star"></i></a></li>-->
+<!--                                                </ul>-->
+<!--                                            </div>-->
+<!--                                            <h6><a href="#">Coil Spring Conversion</a></h6>-->
+<!--                                            <div class="product-price">-->
+<!--                                                <span>$49.00</span>-->
+<!--                                                <del>$65.00</del>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </li>-->
+<!--                            </ul>-->
+<!--                        </div>-->
+                        <!-- Banner Widget -->
+                        <div class="widget ltn__banner-widget">
+                            <a href="shop.html"><img th:src="@{/client_assets/shop_assets/img/banner/2.jpg}" alt="#"></a>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- SHOP DETAILS AREA END -->
+
+    <!-- PRODUCT SLIDER AREA START -->
+    <div class="ltn__product-slider-area ltn__product-gutter pb-70">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-title-area ltn__section-title-2">
+                        <h6 class="section-subtitle ltn__secondary-color">// cars</h6>
+                        <h1 class="section-title">Sản phẩm liên quan<span>.</span></h1>
+                    </div>
+                </div>
+            </div>
+            <div class="row ltn__related-product-slider-one-active slick-arrow-1">
+                <!-- ltn__product-item -->
+                <div th:each="temp : ${product_related}" class="col-lg-12">
+                    <div class="ltn__product-item ltn__product-item-3 text-center">
+                        <div class="product-img">
+                            <a th:href="@{/shop/detail/{id}(id=${temp.id})}"><img th:src="@{${temp.imagesPath}}"
+                                                                                     alt="#"></a>
+                            <div class="product-badge">
+                                <ul>
+                                    <li class="sale-badge">New</li>
+                                </ul>
+                            </div>
+                            <div class="product-hover-action">
+                                <ul>
+                                    <li>
+                                        <a href="#" title="Quick View" data-bs-toggle="modal"
+                                           data-bs-target="#quick_view_modal"
+                                           th:onclick="'quickView(\'' + ${temp.id} + '\')'">
+                                            <i class="far fa-eye"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#add_to_cart_modal"
+                                           th:attr="data-product-img=${temp.imagesPath}, data-product-name=${temp.name}"
+                                           th:onclick="'addToCart(this, \'' + ${temp.id} + '\')'" title="Add to Cart">
+                                            <i class="fas fa-shopping-cart"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-ratting">
+                                <ul>
+                                    <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                    <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                    <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                    <li><a href="#"><i class="fas fa-star-half-alt"></i></a></li>
+                                    <li><a href="#"><i class="far fa-star"></i></a></li>
+                                </ul>
+                            </div>
+                            <h2 class="product-title"><a th:href="@{/shop/detail/{id}(id=${temp.id})}"
+                                                         th:text="${temp.name}"></a></h2>
+                            <div class="product-price">
+                                <span><span
+                                        th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')}"></span> VNĐ</span>
+                                <!--                                <del>$162.00</del>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- PRODUCT SLIDER AREA END -->
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+    <!-- All JS Plugins -->
+    <script th:src="@{/client_assets/shop_assets/js/plugins.js}"></script>
+    <!-- Main JS -->
+    <script th:src="@{/client_assets/shop_assets/js/main.js}"></script>
+
+    <script th:src="@{/webjars/jquery/3.6.4/jquery.min.js}"></script>
+    <script th:src="@{/client_assets/shop_assets/js/cart.js}"></script>
+</div>
+</body>
+</html>

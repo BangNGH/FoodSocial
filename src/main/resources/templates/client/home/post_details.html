@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/client_layout}"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Thực Đơn</title>
+    <!-- Place favicon.png in the root directory -->
+    <link rel="shortcut icon" th:href="@{/client_assets/shop_assets//client_assets/shop_assets/img/favicon.png}" type="image/x-icon"/>
+    <!-- Font Icons css -->
+    <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/font-icons.css}">
+    <!-- plugins css -->
+    <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/plugins.css}">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/style.css}">
+    <!-- Responsive css -->
+    <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/responsive.css}">
+    <!-- ToaStr   -->
+    <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/toastr.css}">
+    <!-- Icons Css -->
+    <link th:href="@{/assets/css/icons.min.css}" rel="stylesheet" type="text/css"/>
+    <style>
+        .comment-container {
+            display: flex;
+            align-items: center; /* Để dặt các phần tử vào giữa theo chiều dọc */
+        }
+
+        .comment {
+            flex-grow: 1; /* Để textarea mở rộng và chiếm hết phần còn lại */
+            padding: 10px; /* Thêm padding cho textarea nếu cần */
+            height: 50px;
+            border-radius: 20px;
+        }
+
+        #submitComment {
+            margin-left: 10px; /* Khoảng cách giữa textarea và button */
+        }
+
+
+        #thumbnailDiv {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .post {
+            top: 80px;
+            cursor: pointer;
+            height: 50px;
+            position: fixed;
+            right: 20px;
+            text-align: center;
+            width: 50px;
+            z-index: 9999;
+            -webkit-transition: 0.4s;
+            -o-transition: 0.4s;
+            transition: 0.4s;
+            border-radius: 50%;
+            background-color: #dc4734;
+            -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+        }
+
+        .mgb {
+            margin-bottom: 15px;
+        }
+
+        .mgt {
+            margin-top: 15px;
+        }
+
+        /* CSS cho hình ảnh xem trước */
+        #thumbnail {
+            width: 100%; /* Đảm bảo hình ảnh chiếm toàn bộ chiều rộng của thẻ */
+            height: auto; /* Tự động tính toán chiều cao để duy trì tỷ lệ khung hình ban đầu */
+        }
+    </style>
+
+</head>
+<body>
+<div layout:fragment="content">
+
+
+    <div class="main-wrapper pt-80">
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 order-2 order-lg-1">
+                    <aside class="widget-area">
+                        <div class="card card-profile widget-item p-0">
+                            <div class="profile-banner">
+
+                                <figure class="profile-banner-small">
+                                    <a href="">
+                                        <img src="assets/images/banner/banner-small.jpg" alt="">
+                                    </a>
+                                    <a href="profile.html" class="profile-thumb-2">
+                                        <img th:unless="${post.user.avatarImagePath}" class="rounded-avatar"
+                                             alt="avatar-image"
+                                             src="/client_assets/images/davatar.png"/>
+                                        <img th:if="${post.user.avatarImagePath}" class="rounded-avatar"
+                                             alt="avatar-image"
+                                             th:src="@{${post.user.avatarImagePath}}"/>
+                                    </a>
+                                </figure>
+                                <div class="profile-desc text-center">
+                                    <h6 class="author"><a th:href="@{'/profile/' +${post.user.id}}"
+                                                          th:text="${post.user.fullName}"></a></h6>
+                                    <p th:text="${post.user.userInfo.otherInfo}"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="postID" th:value="${post.id}">
+                        <div class="card widget-item">
+                            <h4 class="widget-title" style="font-size: 15px;">Bình luận</h4>
+                            <div id="commentContainer">
+                                <th:block th:each="comment :${post.comments}">
+                            <div class="unorder-list mgb" style="background-color: #f0f2f5; border-radius: 5px;padding: 7px;">
+                                <!-- profile picture end -->
+                                <div class="profile-thumb">
+                                    <a th:href="@{'/profile/' +${comment.user.id}}">
+                                        <figure class="profile-thumb-small">
+                                            <img th:unless="${comment.user.avatarImagePath}" alt="avatar-image"
+                                                 src="/client_assets/images/davatar.png"/>
+                                            <img th:if="${comment.user.avatarImagePath}" alt="avatar-image"
+                                                 th:src="@{${comment.user.avatarImagePath}}"/>
+                                        </figure>
+                                    </a>
+                                </div>
+                                <!-- profile picture end -->
+
+                                <div class="unorder-list-info">
+                                    <h3 class="list-title"><a href="#" th:text="${comment.user.fullName}"></a></h3>
+                                    <p class="list-subtitle" th:text="${comment.comment}"></p>
+                                </div>
+                            </div>
+                                </th:block>
+                            </div>
+
+                            <div class="comment-container">
+                                <textarea id="comment" class="comment" placeholder="Thêm bình luận"></textarea>
+
+                                <button onclick="commentPost()" id="submitComment" name="buttonComment" type="submit" title="Gửi" class="text-cookpad-gray-400 pr-rg" data-submit-focuser-target="submit" data-toggle-submit-target="submit" data-disable-input-target="submitButton">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="text-cookpad-24 mise-icon mise-icon-send"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m7 12-4 8 18-8L3 4l4 8Zm0 0h5"></path></svg>
+                                </button>
+                            </div>
+                            </button>
+                        </div>
+                    </aside>
+                </div>
+                <script>
+                    function commentPost() {
+                        const comment = document.querySelector('#comment').value.trim(); // Lấy giá trị và loại bỏ khoảng trắng đầu cuối
+                        const postID = document.querySelector('#postID').value;
+                        if (comment === "") {
+                            alert("Vui lòng nhập bình luận trước khi gửi.");
+                            return; // Không thực hiện AJAX request nếu textarea trống
+                        }
+                        $.ajax({
+                            url: '/api/comment',
+                            type: 'GET',
+                            data: {comment: comment, postID: postID},
+                            success: function (comment) {
+                                const container = document.querySelector('#commentContainer');
+                                const commentNode = `  <div class="unorder-list mgb" style="background-color: #f0f2f5; border-radius: 5px;padding: 7px;">
+                                <!-- profile picture end -->
+                                <div class="profile-thumb">
+                                    <a href="/profile/${comment.user.id}}">
+
+                                        <figure class="profile-thumb-small">
+    <img alt="avatar-image" src="${comment.user.avatarImagePath ? comment.user.avatarImagePath : '/client_assets/images/davatar.png'}"/>
+</figure>
+
+                                    </a>
+                                </div>
+                                <!-- profile picture end -->
+
+                                <div class="unorder-list-info">
+                                    <h3 class="list-title"><a href="#">${comment.user.fullName}</a></h3>
+                                    <p class="list-subtitle">${comment.comment}</p>
+                                </div>
+                            </div>`;
+                                container.innerHTML += commentNode;
+                                comment.value ='';
+                            },
+                            error: function (error) {
+                                console.log('Error:', error);
+                            }
+                        });
+                    }
+                </script>
+                <div class="col-lg-6 order-1 order-lg-2">
+                    <div class="card">
+                        <div class="form-group row">
+                            <h4 class="widget-title" style="margin-bottom: 20px" th:text="${post.foodName}"></h4>
+                            <div style="display: flex">
+                            <p style="
+    margin-left: 20px;
+    margin-right: 40px;
+"><i class="flaticon-user"></i> [[${post.serving_size}]]</p>
+                            <p><i class="bi bi-alarm-clock"></i> [[${post.cookingTime}]]</p>
+                            </div>
+                            <div
+                                    style="max-width: 100%; max-height: 100%; margin-top: 10px;">
+                                <img th:src="@{${post.postImagePath}}" alt="image-preview"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" id="ingredientContainer">
+                        <h4 class="widget-title">Nguyên liệu gồm có</h4>
+                        <th:block th:each="ingredient : ${post.ingredients}">
+                            <div class="form-group mgb">
+                                <label class="form-control" th:text="${ingredient.ingredientName}"></label>
+                            </div>
+                        </th:block>
+                    </div>
+                    <div class="card" id="stepContainer">
+                        <h4 class="widget-title">Các Bước Thực Hiện</h4>
+                        <th:block th:each="step : ${post.steps}">
+                            <div class="form-group mgb">
+                                <h6 style="font-style: italic; font-weight: bold" th:text="'Bước '+${step.stepNumber}"></h6>
+                                <p class="post-desc mgt mgb" style="font-size: 17px;" th:text="${step.stepDescription}">
+                                </p>
+                                <div class="mgt">
+                                    <div
+                                            style="max-width: 100%; max-height: 100%;margin-top: 10px;">
+                                        <img class="rounded-avatar"
+                                             alt="avatar-image"
+                                             th:src="@{'/steps-images/' + ${step.recipe.id} + '/' + ${step.stepImagePath}}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </th:block>
+                    </div>
+
+                    </form>
+                </div>
+                <div class="col-lg-3 order-3">
+                    <aside class="widget-area">
+                        <!-- widget single item start -->
+                        <div th:object="${product1}" class="card widget-item">
+                            <h4 sec:authorize="hasAnyAuthority('ADMIN')" style="text-transform: unset" class="widget-title">Thay đổi sản phẩm <a href="#" data-bs-toggle="modal" data-bs-target="#change_product1_modal"><i style="font-size: 20px" class='bx bxs-edit'></i></a></h4>
+
+                            <div class="ltn__modal-area ltn__add-to-cart-modal-area">
+                                <div class="modal fade" id="change_product1_modal" tabindex="-1">
+                                    <div class="modal-dialog modal-md" role="document">
+                                        <div style="width: 600px" class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <form  th:action="@{/changeProduct1}" method="post" style="height: 400px" class="modal-body">
+                                                <div class="ltn__quick-view-modal-inner">
+                                                    <div class="modal-product-item">
+                                                        <div class="row">
+                                                            <div class="col-12">
+                                                                <div style="height: 500px" class="modal-product-info">
+                                                                        <h5><a href="#">Danh sách sản phẩm</a></h5>
+                                                                    <div style="margin: 5px 0">
+                                                                        <select class="" name="productID">
+                                                                            <option th:each="product: ${products}" th:value="${product.id}"
+                                                                                    th:text="${product.name}"></option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="btn-wrapper">
+                                                                            <a style="margin-left: 5px" data-bs-dismiss="modal" aria-label="Close" class="theme-btn-1 btn btn-effect-1">Huỷ</a>
+                                                                            <button style="border: none" ype="submit"
+                                                                               class="theme-btn-2 btn btn-effect-2">Xác nhận</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="widget-body">
+                                <div style="margin-bottom: 0px" class="ltn__product-item ltn__product-item-3 text-center">
+                                    <div class="product-img">
+                                        <a th:href="@{/shop/detail/{id}(id=${product1.id})}"><img style="z-index: unset" th:src="@{${product1.imagesPath}}" alt="#"></a>
+                                        <div class="product-badge">
+                                            <ul>
+                                                <li class="sale-badge">New</li>
+                                            </ul>
+                                          </div>
+                                        <div class="product-hover-action">
+                                            <ul>
+<!--                                                <li>-->
+<!--                                                    <a href="#" title="Quick View" data-bs-toggle="modal"-->
+<!--                                                       data-bs-target="#quick_view_modal"-->
+<!--                                                       th:onclick="'quickView(\'' + ${product1.id} + '\')'">-->
+<!--                                                        <i class="far fa-eye"></i>-->
+<!--                                                    </a>-->
+<!--                                                </li>-->
+                                                <li>
+                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#add_to_cart_modal"
+                                                       th:onclick="'addToCart(\'' + ${product1.id} + '\')'" title="Add to Cart">
+                                                        <i class="fas fa-shopping-cart"></i>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="product-info">
+                                        <div class="product-ratting">
+                                            <ul>
+                                                <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                <li><a href="#"><i class="fas fa-star-half-alt"></i></a></li>
+                                                <li><a href="#"><i class="far fa-star"></i></a></li>
+                                            </ul>
+                                        </div>
+                                        <h2 class="product-title"><a th:href="@{/shop/detail/{id}(id=${product1.id})}" th:text="${product1.name}"></a></h2>
+                                        <div class="product-price">
+                                                <span><span
+                                                        th:text="${#numbers.formatDecimal(product1.price, 0, 'COMMA', 0, 'POINT')}"></span> VNĐ</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- widget single item end -->
+
+                        <!-- widget single item start -->
+                        <div th:object="${product2}" class="card widget-item">
+                            <h4 sec:authorize="hasAnyAuthority('ADMIN')" style="text-transform: unset" class="widget-title">Thay đổi sản phẩm <a href="#" data-bs-toggle="modal" data-bs-target="#change_product2_modal"><i style="font-size: 20px" class='bx bxs-edit'></i></a></h4>
+                            <div class="ltn__modal-area ltn__add-to-cart-modal-area">
+                                <div class="modal fade" id="change_product2_modal" tabindex="-1">
+                                    <div class="modal-dialog modal-md" role="document">
+                                        <div style="width: 600px" class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <form  th:action="@{/changeProduct2}" method="post" style="height: 400px" class="modal-body">
+                                                <div class="ltn__quick-view-modal-inner">
+                                                    <div class="modal-product-item">
+                                                        <div class="row">
+                                                            <div class="col-12">
+                                                                <div style="height: 500px" class="modal-product-info">
+                                                                    <h5><a href="#">Danh sách sản phẩm</a></h5>
+                                                                    <div style="margin: 5px 0">
+                                                                        <select class="" name="productID">
+                                                                            <option th:each="product: ${products}" th:value="${product.id}"
+                                                                                    th:text="${product.name}"></option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="btn-wrapper">
+                                                                        <a style="margin-left: 5px" data-bs-dismiss="modal" aria-label="Close" class="theme-btn-1 btn btn-effect-1">Huỷ</a>
+                                                                        <button style="border: none" ype="submit"
+                                                                                class="theme-btn-2 btn btn-effect-2">Xác nhận</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="widget-body">
+                                <div style="margin-bottom: 0px" class="ltn__product-item ltn__product-item-3 text-center">
+                                    <div class="product-img">
+                                        <a th:href="@{/shop/detail/{id}(id=${product2.id})}"><img style="z-index: unset" th:src="@{${product2.imagesPath}}" alt="#"></a>
+                                        <div class="product-badge">
+                                            <ul>
+                                                <li class="sale-badge">New</li>
+                                            </ul>
+                                        </div>
+                                        <div class="product-hover-action">
+                                            <ul>
+<!--                                                <li>-->
+<!--                                                    <a href="#" title="Quick View" data-bs-toggle="modal"-->
+<!--                                                       data-bs-target="#quick_view_modal"-->
+<!--                                                       th:onclick="'quickView(\'' + ${product2.id} + '\')'">-->
+<!--                                                        <i class="far fa-eye"></i>-->
+<!--                                                    </a>-->
+<!--                                                </li>-->
+                                                <li>
+                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#add_to_cart_modal"
+                                                       th:onclick="'addToCart(\'' + ${product2.id} + '\')'" title="Add to Cart">
+                                                        <i class="fas fa-shopping-cart"></i>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="product-info">
+                                        <div class="product-ratting">
+                                            <ul>
+                                                <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                <li><a href="#"><i class="fas fa-star-half-alt"></i></a></li>
+                                                <li><a href="#"><i class="far fa-star"></i></a></li>
+                                            </ul>
+                                        </div>
+                                        <h2 class="product-title"><a th:href="@{/shop/detail/{id}(id=${product2.id})}" th:text="${product2.name}"></a></h2>
+                                        <div class="product-price">
+                                                <span><span
+                                                        th:text="${#numbers.formatDecimal(product2.price, 0, 'COMMA', 0, 'POINT')}"></span> VNĐ</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- widget single item end -->
+
+                        <!-- widget single item start -->
+                        <div th:object="${product3}" class="card widget-item">
+                            <h4 sec:authorize="hasAnyAuthority('ADMIN')" style="text-transform: unset"
+                                class="widget-title">Thay đổi sản phẩm <a href="#" data-bs-toggle="modal" data-bs-target="#change_product3_modal"><i style="font-size: 20px" class='bx bxs-edit'></i></a></h4>
+                            <div class="ltn__modal-area ltn__add-to-cart-modal-area">
+                                <div class="modal fade" id="change_product3_modal" tabindex="-1">
+                                    <div class="modal-dialog modal-md" role="document">
+                                        <div style="width: 600px" class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <form  th:action="@{/changeProduct3}" method="post" style="height: 400px" class="modal-body">
+                                                <div class="ltn__quick-view-modal-inner">
+                                                    <div class="modal-product-item">
+                                                        <div class="row">
+                                                            <div class="col-12">
+                                                                <div style="height: 500px" class="modal-product-info">
+                                                                    <h5><a href="#">Danh sách sản phẩm</a></h5>
+                                                                    <div style="margin: 5px 0">
+                                                                        <select class="" name="productID">
+                                                                            <option th:each="product: ${products}" th:value="${product.id}"
+                                                                                    th:text="${product.name}"></option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="btn-wrapper">
+                                                                        <a style="margin-left: 5px" data-bs-dismiss="modal" aria-label="Close" class="theme-btn-1 btn btn-effect-1">Huỷ</a>
+                                                                        <button style="border: none" ype="submit"
+                                                                                class="theme-btn-2 btn btn-effect-2">Xác nhận</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="widget-body">
+                                <div style="margin-bottom: 0px" class="ltn__product-item ltn__product-item-3 text-center">
+                                    <div class="product-img">
+                                        <a th:href="@{/shop/detail/{id}(id=${product3.id})}"><img style="z-index: unset" th:src="@{${product3.imagesPath}}" alt="#"></a>
+                                        <div class="product-badge">
+                                            <ul>
+                                                <li class="sale-badge">New</li>
+                                            </ul>
+                                        </div>
+                                        <div class="product-hover-action">
+                                            <ul>
+<!--                                                <li>-->
+<!--                                                    <a href="#" title="Quick View" data-bs-toggle="modal"-->
+<!--                                                       data-bs-target="#quick_view_modal"-->
+<!--                                                       th:onclick="'quickView(\'' + ${product3.id} + '\')'">-->
+<!--                                                        <i class="far fa-eye"></i>-->
+<!--                                                    </a>-->
+<!--                                                </li>-->
+                                                <li>
+                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#add_to_cart_modal"
+                                                       th:onclick="'addToCart(\'' + ${product3.id} + '\')'" title="Add to Cart">
+                                                        <i class="fas fa-shopping-cart"></i>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="product-info">
+                                        <div class="product-ratting">
+                                            <ul>
+                                                <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                <li><a href="#"><i class="fas fa-star"></i></a></li>
+                                                <li><a href="#"><i class="fas fa-star-half-alt"></i></a></li>
+                                                <li><a href="#"><i class="far fa-star"></i></a></li>
+                                            </ul>
+                                        </div>
+                                        <h2 class="product-title"><a th:href="@{/shop/detail/{id}(id=${product3.id})}" th:text="${product3  .name}"></a></h2>
+                                        <div class="product-price">
+                                                <span><span
+                                                        th:text="${#numbers.formatDecimal(product3.price, 0, 'COMMA', 0, 'POINT')}"></span> VNĐ</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- widget single item end -->
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/webjars/jquery/3.6.4/jquery.min.js}"></script>
+    <script th:src="@{/client_assets/shop_assets/js/cart.js}"></script>
+<!--    &lt;!&ndash; All JS Plugins &ndash;&gt;-->
+<!--    <script th:src="@{/client_assets/shop_assets/js/plugins.js}"></script>-->
+    <!-- Main JS -->
+    <script th:src="@{/client_assets/shop_assets/js/main.js}"></script>
+</div>
+</body>
+</html>

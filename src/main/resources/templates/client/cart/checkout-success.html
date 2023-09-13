@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/client_layout}"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toán</title>
+    <!-- Place favicon.png in the root directory -->
+    <link rel="shortcut icon" th:href="@{/client_assets/shop_assets//client_assets/shop_assets/img/favicon.png}" type="image/x-icon"/>
+    <!-- Font Icons css -->
+    <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/font-icons.css}">
+    <!-- plugins css -->
+    <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/plugins.css}">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/style.css}">
+    <!-- Responsive css -->
+    <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/responsive.css}">
+    <!-- ToaStr   -->
+    <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/toastr.css}">
+    <!-- Icons Css -->
+    <link th:href="@{/assets/css/icons.min.css}" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <div style="margin-bottom: 0"
+         class="ltn__breadcrumb-area ltn__breadcrumb-area-2 ltn__breadcrumb-color-white bg-overlay-theme-black-90 bg-image"
+         th:attr="data-bg=@{/client_assets/img/bg/9.jpg}">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ltn__breadcrumb-inner ltn__breadcrumb-inner-2 justify-content-between">
+                        <div class="section-title-area ltn__section-title-2">
+                            <h6 class="section-subtitle ltn__secondary-color">// Welcome to our company</h6>
+                            <h1 class="section-title white-color">Thanh toán</h1>
+                        </div>
+                        <div class="ltn__breadcrumb-list">
+                            <ul>
+                                <li><a href="/">Trang chủ</a></li>
+                                <li>Thanh toán</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="vh-100 d-flex justify-content-center align-items-center">
+        <div class="col-md-6">
+            <div class="border border-3 border-success"></div>
+            <div class="card  bg-white shadow p-5">
+                <div class="mb-4 text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="text-success bi bi-check-circle" width="75"
+                         height="75"
+                         fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                        <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                    </svg>
+                </div>
+                <div class="text-center">
+                    <h1>Đơn hàng đã được xác nhận</h1>
+                    <p>Đơn hàng của bạn đã được xác nhận. Bạn sẽ nhận được email/SMS xác nhận đơn hàng trong thời gian sớm nhất,
+                        cùng với ngày dự kiến giao hàng của sản phẩm
+                    </p>
+                    <a th:href="@{/}" class="btn btn-outline-success">Trang chủ</a>
+                    <a style="color: #fff;background-color: #198754;" th:href="@{/shop}"
+                       class="btn btn-outline-success c-shopping">Tiếp tục mua sắp</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/webjars/jquery/3.6.4/jquery.min.js}"></script>
+</div>
+</body>
+</html>

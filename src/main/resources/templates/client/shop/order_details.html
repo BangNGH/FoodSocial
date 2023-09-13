@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/client_layout}"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chi tiết đơn hàng</title>
+  <!-- Place favicon.png in the root directory -->
+  <link rel="shortcut icon" th:href="@{/client_assets/shop_assets//client_assets/shop_assets/img/favicon.png}" type="image/x-icon"/>
+  <!-- Font Icons css -->
+  <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/font-icons.css}">
+  <!-- plugins css -->
+  <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/plugins.css}">
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/style.css}">
+  <!-- Responsive css -->
+  <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/responsive.css}">
+  <!-- ToaStr   -->
+  <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/toastr.css}">
+  <!-- Icons Css -->
+  <link th:href="@{/assets/css/icons.min.css}" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div layout:fragment="content">
+
+  <!-- BREADCRUMB AREA START -->
+  <div class="ltn__breadcrumb-area ltn__breadcrumb-area-2 ltn__breadcrumb-color-white bg-overlay-theme-black-90 bg-image"
+       th:attr="data-bg=@{/client_assets/shop_assets/img/bg/9.jpg}">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="ltn__breadcrumb-inner ltn__breadcrumb-inner-2 justify-content-between">
+            <div class="section-title-area ltn__section-title-2">
+              <h6 class="section-subtitle ltn__secondary-color">// Welcome to our company</h6>
+              <h1 class="section-title white-color">Giỏ hàng</h1>
+            </div>
+            <div class="ltn__breadcrumb-list">
+              <ul>
+                <li><a href="/">Trang chủ</a></li>
+                <li><a href="/shop">Cửa hàng</a></li>
+                <li>Chi tiết hoá đơn</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- BREADCRUMB AREA END -->
+
+  <!-- SHOPING CART AREA START -->
+  <div style="margin-bottom: 200px" class="liton__shoping-cart-area mb-120">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="shoping-cart-inner" id="cart">
+            <div class="table-responsive">
+              <table class="table align-middle table-nowrap table-check">
+                <thead class="table-light">
+                <tr>
+                  <th class="align-middle cart-product-image">Ảnh</th>
+                  <th class="align-middle">Sản phẩm</th>
+                  <th class="align-middle">Giá</th>
+                  <th class="align-middle">Số lượng</th>
+                </tr>
+                </thead>
+                <tbody id="cart-body">
+<th:block th:each="order:${order.orderDetails}">
+                <tr>
+                  <td class="cart-product-image">
+                    <a th:href="'/shop/detail/'+${order.product.id}"><img th:src="'/product-images/'+${order.product.id}+'/'+${order.product.img}" alt="#"></a>
+                  </td>
+                  <td class="cart-product-info">
+                    <h4 style="font-size: 16px"><a th:href="'/shop/detail/'+${order.product.id}">[[${order.product.name}]]</a></h4>
+                  </td>
+                  <td class="cart-product-price"><span
+                          th:text="${#numbers.formatDecimal(order.product.price, 0, 'COMMA', 0, 'POINT')}"></span> VNĐ</td>
+                  <td class="cart-product-quantity">
+                    <div class="cart-product-quantity">
+                      <input style="border: none" type="number" readonly min="1" th:value="${order.quantity}" name="qtybutton" class="quantity">
+                    </div>
+                  </td>
+                </tr>
+</th:block>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="shoping-cart-total mt-50" id="cart-footer">
+            <h4>Chi tiết hàng</h4>
+            <table class="table">
+              <tbody>
+              <tr>
+                <td>Giao hàng và xử lý</td>
+                <td>Free</td>
+              </tr>
+              <tr>
+                <td><strong>Tổng hoá đơn</strong></td>
+                <td><strong><span th:text="${#numbers.formatDecimal(order.total_price, 0, 'COMMA', 0, 'POINT')}"></span></strong></td>
+              </tr>
+              </tbody>
+            </table>
+            <div  th:if ="${order.is_paid}" class="btn-wrapper text-right text-end">
+              <a style="
+    background-color: #5aa85a;" class="theme-btn-1 btn btn-effect-1">Đã thanh toán</a>
+            </div>
+            <div th:unless="${order.is_paid}" class="btn-wrapper text-right text-end">
+              <a class="theme-btn-1 btn btn-effect-1">Thanh toán COD</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- SHOPING CART AREA END -->
+
+
+  <!-- Main JS -->
+  <script th:src="@{/client_assets/shop_assets/js/main.js}"></script>
+  <!--ToaStr-->
+</div>
+</body>
+</html>

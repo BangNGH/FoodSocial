@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/client_layout}"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tạo Thực Đơn</title>
+    <style>
+
+        #thumbnailDiv {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .post {
+            top: 80px;
+            cursor: pointer;
+            height: 50px;
+            position: fixed;
+            right: 20px;
+            text-align: center;
+            width: 50px;
+            z-index: 9999;
+            -webkit-transition: 0.4s;
+            -o-transition: 0.4s;
+            transition: 0.4s;
+            border-radius: 50%;
+            background-color: #dc4734;
+            -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+        }
+
+        .mgb {
+            margin-bottom: 15px;
+        }
+
+        .mgt {
+            margin-top: 15px;
+        }
+
+        /* CSS cho hình ảnh xem trước */
+        #thumbnail {
+            width: 100%; /* Đảm bảo hình ảnh chiếm toàn bộ chiều rộng của thẻ */
+            height: auto; /* Tự động tính toán chiều cao để duy trì tỷ lệ khung hình ban đầu */
+        }
+    </style>
+
+</head>
+<body>
+<div layout:fragment="content">
+
+
+    <div class="main-wrapper pt-80">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 offset-lg-3">
+                    <form th:action="@{/createRecipe}" th:object="${recipe}" method="post"
+                          enctype="multipart/form-data">
+                        <input type="hidden" th:field="*{id}">
+                        <input type="hidden" id="numberOfImagesInput" name="numberOfImages" value="0">
+                        <div class="card">
+                            <div class="form-group row">
+                                <h4 class="widget-title">Đăng hình món ăn của bạn ở đây</h4>
+                                <input type="file" required name="imageFile" id="imageFile" accept=".png, .jpg, .jpeg"
+                                       class="form-control d-none"/>
+                                <label style="cursor: pointer;font-weight: bold;" for="imageFile"
+                                       class="col-form-label text-center"> <!-- Sử dụng lớp text-center ở đây -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"
+                                         viewBox="0 0 20 20" class="loading:hidden mise-icon mise-icon-camera">
+                                        <path stroke="currentColor" stroke-width="1.3"
+                                              d="M15 17.5H5a3.333 3.333 0 0 1-3.333-3.333v-7.5c0-.92.746-1.667 1.667-1.667h1.608c.557 0 1.077-.279 1.386-.742l.677-1.016c.31-.463.83-.742 1.387-.742h3.216c.557 0 1.078.279 1.387.742l.677 1.016c.31.463.83.742 1.387.742h1.608c.92 0 1.666.746 1.666 1.667v7.5A3.333 3.333 0 0 1 15 17.5Z"></path>
+                                        <circle cx="4.167" cy="7.5" r=".833" fill="currentColor" stroke="currentColor"
+                                                stroke-width=".1" transform="rotate(-180 4.167 7.5)"></circle>
+                                        <circle cx="10" cy="10.834" r="2.5" stroke="currentColor"
+                                                stroke-width="1.3"></circle>
+                                    </svg>
+                                    Chia sẻ với mọi người thành phẩm nấu nướng của bạn nào!
+                                </label>
+                                <div id="thumbnailDiv"
+                                     style="max-width: 100%; max-height: 100%; margin-top: 10px;">
+                                    <img id="thumbnail" alt="image-preview" th:src="@{${recipe.postImagePath}}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h4 class="widget-title">Mô tả món ăn của bạn</h4>
+                            <div class="form-group mgb">
+                                <input type="text" id="foodName" required class="form-control"
+                                       placeholder="Đặt tên món của bạn tại đây" th:field="*{foodName}">
+                            </div>
+                            <div class="form-group mgb">
+                                <textarea id="description" required class="form-control"
+                                          placeholder="Hãy chia sẻ với mọi người về món này của bạn nhé "
+                                          th:field="*{description}"></textarea>
+                            </div>
+                            <div class="form-group row mgb">
+                                <label class="col-sm-4 col-form-label">Khẩu phần:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"
+                                           placeholder="2 người ăn" th:field="*{serving_size}">
+                                </div>
+                            </div>
+                            <div class="form-group row mgb">
+                                <label class="col-sm-4 col-form-label">Nấu trong:</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control"
+                                           placeholder="1 tiếng 30 phút" th:field="*{cookingTime}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card" id="ingredientContainer">
+                            <h4 class="widget-title">Nguyên liệu</h4>
+                            <div class="form-group mgb">
+                                <input type="text" required class="form-control" placeholder="100g Bột mì" name="ingredients[0].ingredientName">
+                            </div>
+                            <div class="form-group mgb">
+                                <input type="text" required class="form-control" placeholder="500ml nước" name="ingredients[1].ingredientName">
+                            </div>
+                            <button type="button" class="bi bi-plus" style="font-weight: bold;font-size: large"
+                                    id="addIngredientButton">
+                            </button>
+                        </div>
+
+                        <script type="text/javascript">
+                            $(document).ready(function () {
+                                var ingredientIndex = 1;
+
+                                $('#addIngredientButton').click(function () {
+                                    ingredientIndex++;
+
+                                    var newInput = '<div class="form-group mgb">' +
+                                        '<input type="text" required class="form-control" placeholder="Nhập nguyên liệu" name="ingredients[' + ingredientIndex + '].ingredientName" />' +
+                                        '</div>';
+
+                                    // Thêm thẻ input mới vào container
+                                    $('#ingredientContainer').append(newInput);
+
+                                    // Di chuyển nút "Thêm nguyên liệu" xuống cuối container
+                                    $('#ingredientContainer').append($('#addIngredientButton'));
+                                });
+                            });
+                        </script>
+
+
+                        <div class="card" id="stepContainer">
+                            <h4 class="widget-title">Các Bước Thực Hiện</h4>
+                            <div class="form-group mgb">
+                                <input type="text" required class="form-control"
+                                       placeholder="Bước 1: Trộn bột và nước nhào đến khi đặc lại"
+                                       name="steps[0].stepDescription">
+                                <div class="mgt">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"
+                                         viewBox="0 0 20 20" class="loading:hidden mise-icon mise-icon-camera">
+                                        <path stroke="currentColor" stroke-width="1.3"
+                                              d="M15 17.5H5a3.333 3.333 0 0 1-3.333-3.333v-7.5c0-.92.746-1.667 1.667-1.667h1.608c.557 0 1.077-.279 1.386-.742l.677-1.016c.31-.463.83-.742 1.387-.742h3.216c.557 0 1.078.279 1.387.742l.677 1.016c.31.463.83.742 1.387.742h1.608c.92 0 1.666.746 1.666 1.667v7.5A3.333 3.333 0 0 1 15 17.5Z"></path>
+                                        <circle cx="4.167" cy="7.5" r=".833" fill="currentColor"
+                                                stroke="currentColor"
+                                                stroke-width=".1" transform="rotate(-180 4.167 7.5)"></circle>
+                                        <circle cx="10" cy="10.834" r="2.5" stroke="currentColor"
+                                                stroke-width="1.3"></circle>
+                                    </svg>
+                                    <input required type="file" aria-label="Gửi hình" name="extraImage"
+                                           accept="image/*"></div>
+                                <div class="thumbnailShow"
+                                     style="max-width: 100%; max-height: 100%;display: none;  margin-top: 10px;
+            overflow: hidden;">
+                                    <img id="thumbnail0" alt="image-preview"/>
+                                </div>
+                            </div>
+                            <div class="form-group mgb">
+                                <input type="text" required class="form-control"
+                                       placeholder="Bước 2: Ủ trong ngăn lạnh trong vòng 2-3 tiếng"
+                                       name="steps[1].stepDescription">
+                                <div class="mgt">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"
+                                         viewBox="0 0 20 20" class="loading:hidden mise-icon mise-icon-camera">
+                                        <path stroke="currentColor" stroke-width="1.3"
+                                              d="M15 17.5H5a3.333 3.333 0 0 1-3.333-3.333v-7.5c0-.92.746-1.667 1.667-1.667h1.608c.557 0 1.077-.279 1.386-.742l.677-1.016c.31-.463.83-.742 1.387-.742h3.216c.557 0 1.078.279 1.387.742l.677 1.016c.31.463.83.742 1.387.742h1.608c.92 0 1.666.746 1.666 1.667v7.5A3.333 3.333 0 0 1 15 17.5Z"></path>
+                                        <circle cx="4.167" cy="7.5" r=".833" fill="currentColor"
+                                                stroke="currentColor"
+                                                stroke-width=".1" transform="rotate(-180 4.167 7.5)"></circle>
+                                        <circle cx="10" cy="10.834" r="2.5" stroke="currentColor"
+                                                stroke-width="1.3"></circle>
+                                    </svg>
+                                    <input required type="file" aria-label="Gửi hình" name="extraImage"
+                                           accept="image/*"></div>
+                                <div class="thumbnailShow"
+                                     style="max-width: 100%; max-height: 100%;display: none;  margin-top: 10px;
+            overflow: hidden;">
+                                    <img id="thumbnail1" alt="image-preview"/>
+                                </div>
+                            </div>
+                            <button type="button" class="bi bi-plus" style="font-weight: bold;font-size: large"
+                                    id="addStep">
+                            </button>
+                        </div>
+                        <script type="text/javascript">
+                            $(document).ready(function () {
+                                var numberOfImages = 0;
+                                $('#imageFile').change(function () {
+                                    showImageThumbnail(this);
+                                });
+
+                                $("input[name='extraImage']").each(function (stepsIndex) {
+                                        $(this).change(function () {
+                                            showExImageThumbnail(this, stepsIndex);
+                                        })
+                                    }
+                                );
+
+                                $('#uploadButton').click(function () {
+                                    $('#imageFile').click();
+                                });
+
+                                function showExImageThumbnail(inputFile, stepsIndex) {
+                                    file = inputFile.files[0];
+                                    reader = new FileReader();
+
+                                    reader.onload = function (e) {
+                                        $('#thumbnail' + stepsIndex).attr('src', e.target.result);
+                                        $('.thumbnailShow').show();
+                                        numberOfImages++;
+                                        $('#numberOfImagesInput').val(numberOfImages);
+                                    };
+
+                                    reader.readAsDataURL(file);
+                                }
+
+                                var stepsIndex = 1;
+                                $('#addStep').click(function () {
+                                    stepsIndex++;
+                                    // Tạo thẻ input mới
+                                    var newInput = '<div class="form-group mgb">' +
+                                        '<input type="text" required class="form-control" placeholder="Nhập bước kế tiếp" name="steps[' + stepsIndex + '].stepDescription"/>' +
+                                        '<div class="mgt">' +
+                                        '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 20 20" class="loading:hidden mise-icon mise-icon-camera">' +
+                                        '<path stroke="currentColor" stroke-width="1.3" d="M15 17.5H5a3.333 3.333 0 0 1-3.333-3.333v-7.5c0-.92.746-1.667 1.667-1.667h1.608c.557 0 1.077-.279 1.386-.742l.677-1.016c.31-.463.83-.742 1.387-.742h3.216c.557 0 1.078.279 1.387.742l.677 1.016c.31.463.83.742 1.387.742h1.608c.92 0 1.666.746 1.666 1.667v7.5A3.333 3.333 0 0 1 15 17.5Z"></path>' +
+                                        '<circle cx="4.167" cy="7.5" r=".833" fill="currentColor" stroke="currentColor" stroke-width=".1" transform="rotate(-180 4.167 7.5)"></circle>' +
+                                        '<circle cx="10" cy="10.834" r="2.5" stroke="currentColor" stroke-width="1.3"></circle>' +
+                                        '</svg>' +
+                                        '<input required type="file" name="extraImage" aria-label="Gửi hình" accept="image/*">' +
+                                        '</div>' +
+                                        '</div>' +
+                                        '<div class="thumbnailShow" style="max-width: 100%; max-height: 100%;display: none; margin-top: 10px;overflow: hidden;">' +
+                                        '<img id="thumbnail' + stepsIndex + '" alt="image-preview"/>' +
+                                        '</div>';
+
+                                    // Thêm thẻ input mới vào container
+                                    $('#stepContainer').append(newInput);
+
+                                    // Di chuyển nút "Thêm nguyên liệu" xuống cuối container
+                                    $('#stepContainer').append($('#addStep'));
+
+                                    addChangeEventHandlerToNewInput(stepsIndex);
+                                });
+
+                                function showImageThumbnail(inputFile) {
+                                    file = inputFile.files[0];
+                                    reader = new FileReader();
+
+                                    reader.onload = function (e) {
+                                        $('#thumbnail').attr('src', e.target.result);
+                                        $('#thumbnailDiv').show();
+                                    };
+
+                                    reader.readAsDataURL(file);
+                                }
+                                function addChangeEventHandlerToNewInput(index) {
+                                    $("input[name='extraImage']").each(function (index) {
+                                            $(this).change(function () {
+                                                showExImageThumbnail(this, index);
+                                            })
+                                        }
+                                    );
+                                }
+                            });
+                        </script>
+                        <button type="submit" class="post ">
+                            <i style="line-height: 50px;
+    color: #fff;
+    font-size: 25px;" class="bi bi-tick"></i>
+
+                        </button>
+                        <p style="top:130px; right: 20px; height: 50px; font-weight: bold;color:black;z-index: 9999;position: fixed;">
+                            Đăng Bài</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đăng Ký</title>
+	<link rel="stylesheet" th:href="@{/client_assets/css/vendor/bootstrap.min.css}">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css">
+<link rel="shortcut icon" href="/client_assets/images/logo/logo.png"
+	type="image/x-icon">
+<link rel="stylesheet" th:href="@{/client_assets/css/app.css}">
+
+</head>
+
+<body>
+<div id="auth">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-7 col-sm-12 mx-auto">
+				<div class="card pt-4">
+					<div class="card-body">
+						<div class="text-center mb-5">
+							<a th:href="${url}">
+								<img src="client_assets/images/logo/logo.png" height="48" class='mb-4'>
+							</a>
+							<h3>Đăng Ký</h3>
+							<p>Vui lòng điền Thông tin vào mẫu bên dưới.</p>
+						</div>
+							<form th:action="@{/register/process_register}" th:object="${registrationRequest}" method="post">
+								<div th:if="${errorMessage}" class="alert alert-danger">
+									<p th:text="${errorMessage}"></p>
+								</div>
+								<div th:if="${successMessage}" class="alert alert-success" style="display: flex; justify-content: center; color: white;">
+									<p th:text="${successMessage}"></p>
+								</div>
+
+								<div class="row">
+									<div class="col-md-6 col-12">
+										<div class="form-group">
+											<label for="fullName">Họ tên</label>
+											<input type="text" id="fullName" class="form-control" required name="fullName"
+												   th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid' : ''"
+												   th:field="*{fullName}">
+											<div class="invalid-feedback" th:errors="*{fullName}"></div>
+										</div>
+									</div>
+									<div class="col-md-6 col-12">
+										<div class="form-group">
+											<label for="email-id-column">Email</label>
+											<input type="email" id="email-id-column" required class="form-control" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''" th:field="*{email}">
+											<div class="invalid-feedback" th:errors="*{email}"></div>
+										</div>
+									</div>
+									<div class="col-md-6 col-12">
+										<div class="form-group">
+											<label for="phone">Điện thoại</label>
+											<input type="text" pattern="0\d{9}" maxlength="10"
+												   title="Vui lòng nhập số điện thoại hợp lệ"
+												   id="phone" name="phone" required class="form-control"
+												   th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid' : ''"
+												   th:field="*{phone}">
+											<div class="invalid-feedback" th:errors="*{phone}"></div>
+										</div>
+									</div>
+									<div class="col-md-6 col-12">
+										<div class="form-group">
+											<label for="password-column">Mật khẩu</label>
+											<input type="password" id="password-column" required minlength="6" maxlength="20" class="form-control" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''" th:field="*{password}">
+											<div class="invalid-feedback" th:errors="*{password}"></div>
+										</div>
+									</div>
+								</div>
+								<a href="/login" style="color: #ff3c23">Bạn đã có tài khoản? Đăng nhập.</a>
+								<div class="clearfix">
+									<button style="float: right;width: 100%; margin-top: 10px;background-color: #dc4734"
+											class="btn btn-primary float-end" type="submit">Đăng Ký
+									</button>
+								</div>
+							</form>
+
+							<div class="divider">
+								<div class="divider-text">HOẶC</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6">
+									<button class="btn btn-block mb-2 btn-primary" style="background-color:#be4136;">
+										<a href="/oauth2/authorization/google" style="color:white"><i
+												class="fab fa-google-plus-g"></i>
+											Đăng nhập Google</a>
+									</button>
+								</div>
+								<div class="col-sm-6">
+									<button class="btn btn-block mb-2 btn-secondary" style="background-color:#3f4750">
+										<a href="/oauth2/authorization/github" style="color:white"><i
+												class="fa-brands fa-github"></i>
+											Đăng nhập Gihub</a>
+									</button>
+								</div>
+							</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+    <script th:src="@{/client_assets/js/feather.min.js}"></script>
+    <script th:src="@{/client_assets/js/app.js}"></script>
+    <script th:src="@{/client_assets/js/main2.js}"></script>
+<script th:src="@{/client_assets/js/vendor/jquery-2.2.4.min.js}"></script>
+</body>
+
+</html>

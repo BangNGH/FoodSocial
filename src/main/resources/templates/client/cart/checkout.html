@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/client_layout}"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Đặt hàng</title>
+  <!-- Place favicon.png in the root directory -->
+  <link rel="shortcut icon" th:href="@{/client_assets/shop_assets/img/favicon.png}" type="image/x-icon"/>
+  <!-- Font Icons css -->
+  <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/font-icons.css}">
+  <!-- plugins css -->
+  <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/plugins.css}">
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/style.css}">
+  <!-- Responsive css -->
+  <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/responsive.css}">
+  <!-- ToaStr   -->
+  <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/toastr.css}">
+  <!-- Icons Css -->
+  <link th:href="@{/assets/css/icons.min.css}" rel="stylesheet" type="text/css"/>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v7.1.0/ol.css">
+  <script src="https://cdn.jsdelivr.net/npm/ol@v7.1.0/dist/ol.js"></script>
+
+  <style>
+    .checkmark {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 25px;
+      width: 50px;
+      background-color: #eee;
+      border-radius: 10px;
+    }
+
+    .custom-checkbox:hover .checkmark {
+      background-color: #ccc;
+    }
+
+    .custom-checkbox input:checked ~ .checkmark {
+      background-color: #dc4734;
+    }
+
+    .checkmark:after {
+      content: "";
+      position: absolute;
+      display: none;
+    }
+
+    .custom-checkbox input:checked ~ .checkmark:after {
+      display: block;
+    }
+
+    .custom-checkbox .checkmark:after {
+      left: 6px;
+      top: 2px;
+      width: 4px;
+      height: 9px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  </style>
+</head>
+<body onload="getCurrentLocation()">
+<div layout:fragment="content">
+
+  <!-- BREADCRUMB AREA START -->
+  <div class="ltn__breadcrumb-area ltn__breadcrumb-area-2 ltn__breadcrumb-color-white bg-overlay-theme-black-90 bg-image"
+       th:attr="data-bg=@{/client_assets/shop_assets/img/bg/9.jpg}">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="ltn__breadcrumb-inner ltn__breadcrumb-inner-2 justify-content-between">
+            <div class="section-title-area ltn__section-title-2">
+              <h6 class="section-subtitle ltn__secondary-color">// Welcome to our company</h6>
+              <h1 class="section-title white-color">Giỏ hàng</h1>
+            </div>
+            <div class="ltn__breadcrumb-list">
+              <ul>
+                <li><a href="/">Trang chủ</a></li>
+                <li>Giỏ hàng</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- BREADCRUMB AREA END -->
+  <!-- WISHLIST AREA START -->
+  <form th:action="@{/cart/checkout}" method="post" class="ltn__checkout-area mb-105">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="ltn__checkout-inner">
+            <div class="ltn__checkout-single-content mt-50">
+              <h4 class="title-2">Chi tiết đơn hàng</h4>
+              <div class="ltn__checkout-single-content-info">
+                <div action="#" >
+                  <h6>Thông tin khách hàng</h6>
+                  <div th:object="${user}" class="row">
+                    <div class="col-md-6">
+                      <div class="input-item input-item-name ltn__custom-icon">
+                        <input style="height: 65px" th:field="*{fullName}"  readonly type="text" name="ltn__name" placeholder="Full name">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="input-item input-item-name ltn__custom-icon">
+                        <input style="height: 65px" th:field="*{gender}" readonly type="text" name="ltn__lastname" placeholder="Username">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="input-item input-item-email ltn__custom-icon">
+                        <input style="height: 65px" th:field="*{email}" readonly type="email" name="ltn__email" placeholder="email address">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="input-item input-item-phone ltn__custom-icon">
+                        <input style="height: 65px" th:field="*{phone}" type="text" name="ltn__phone" placeholder="Số điện thoại người nhận">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-12 col-md-12">
+                      <h6>Địa chỉ</h6>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="input-item">
+                            <input style="height: 65px" required name="address" id="address" type="text" placeholder="Địa chỉ nhận hàng">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group row" style="margin-bottom: 15px;margin-top: 15px;">
+                    <h6 class="col-sm-4 col-form-label">Chọn địa chỉ:</h6>
+                    <div class="col-sm-8">
+                      <label class="custom-checkbox">
+                        <input type="checkbox" id="disableDistance" onclick="toggleDistanceCheck(event)">
+                        <span class="checkmark"></span>
+                      </label>
+                      <input type="hidden" id="disableDistanceHidden" name="disableDistance">
+                    </div>
+                  </div>
+                  <div class="form-group row d-none" id="divsearch" style="margin-bottom: 10px;">
+                    <div id="openmap" style="width: 100%; height: 350px;"></div>
+                  </div>
+
+                  <h6>Ghi chú (không bắt buộc)</h6>
+                  <div class="input-item input-item-textarea ltn__custom-icon">
+                    <textarea name="note" placeholder="Ghi chú về đơn đặt hàng của bạn..."></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="ltn__checkout-payment-method mt-50">
+            <h4 class="title-2">Phương thức thanh toán (chọn 1 phương thưc thanh toán)</h4>
+            <div id="checkout_accordion_1">
+              <div class="card">
+                <label style="font-weight: bold; font-size: 16px" class="ltn__card-title" data-bs-toggle="collapse" data-bs-target="#faq-item-2-2" aria-expanded="true">
+                  Thanh toán khi nhận hàng
+                  <img th:src="@{/client_assets/shop_assets/img/icons/cash.png}" alt="#">
+                  <input style="display:none;" type="checkbox" checked name="cash">
+                </label>
+                <div id="faq-item-2-2" class="collapse show" data-parent="#checkout_accordion_1">
+                  <div class="card-body">
+                    <p>Thanh toán bằng tiền mặt khi nhận hàng</p>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <label style="font-weight: bold; font-size: 16px" class="collapsed ltn__card-title" data-bs-toggle="collapse" data-bs-target="#faq-item-2-4" aria-expanded="false" >
+                  Thanh toán qua PayPal
+                  <img th:src="@{/client_assets/shop_assets/img/icons/payment-3.png}" alt="#">
+                  <input style="display:none;" type="checkbox" name="paypal">
+                </label>
+                <div id="faq-item-2-4" class="collapse" data-parent="#checkout_accordion_1">
+                  <div class="card-body">
+                    <p>Thanh toán qua PayPal, bạn có thể thanh toán bằng thẻ tín dụng nếu bạn không có tài khoản PayPal.</p>
+                  </div>
+                </div>
+              </div>
+              <div style="margin-top: 5px" th:if="${message}" class="alert alert-danger">
+                Vui lòng chọn 1 phương thức thanh toán: thanh toán khi nhận hàng hoặc qua paypal!
+              </div>
+            </div>
+            <div class="ltn__payment-note mt-30 mb-30">
+              <p>Dữ liệu cá nhân của bạn sẽ được sử dụng để xử lý đơn đặt hàng.</p>
+            </div>
+            <button class="btn theme-btn-1 btn-effect-1 text-uppercase" type="submit">Đặt hàng</button>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="shoping-cart-total mt-50">
+            <h4 class="title-2">Tổng giỏ hàng</h4>
+            <table class="table">
+              <tbody>
+              <tr th:each="item : ${cart.cartItems}">
+                <td><span th:text="${item.productName}"></span> <strong>× <span th:text="${item.quantity}"></span></strong></td>
+                <td><span th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')}"></span> VNĐ</td>
+              </tr>
+              <tr>
+                <td><strong>Tổng chi phí</strong></td>
+                <td><strong>
+                  <span th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT')}"></span> VNĐ
+                </strong></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+
+  <script th:src="@{/webjars/jquery/3.6.4/jquery.min.js}"></script>
+  <!-- All JS Plugins -->
+<!--  <script th:src="@{/client_assets/shop_assets/js/plugins.js}"></script>-->
+<!--  &lt;!&ndash; Main JS &ndash;&gt;-->
+<!--  <script th:src="@{/client_assets/shop_assets/js/main.js}"></script>-->
+  <script type="text/javascript">
+    function getCurrentLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      } else {
+        alert("Trình duyệt của bạn không hỗ trợ định vị");
+      }
+    }
+
+    function showPosition(position) {
+      var userLatitude = position.coords.latitude;
+      var userLongitude = position.coords.longitude;
+
+      openmap(userLatitude, userLongitude);
+      var nominatimApiUrl = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + userLatitude + "&lon=" + userLongitude;
+
+
+        $.ajax({
+          url: nominatimApiUrl,
+          type: "GET",
+          dataType: "json",
+          success: function (response) {
+            var address = response.display_name;
+            document.getElementById("address").value = address;
+          },
+          error: function (xhr, status, error) {
+            console.log("Error: " + error);
+          }
+        });
+
+    }
+  </script>
+  <script type="text/javascript">
+    function toggleDistanceCheck(event) {
+      var disableDistanceCheckbox = document.getElementById("disableDistance");
+      var disableDistanceHiddenInput = document.getElementById("disableDistanceHidden");
+      var openMapDiv = document.getElementById("divsearch");
+
+      if (disableDistanceCheckbox.checked) {
+        disableDistanceHiddenInput.value = "true";
+        openMapDiv.classList.remove("d-none"); // Hiện openmap
+      } else {
+        disableDistanceHiddenInput.value = "";
+        openMapDiv.classList.add("d-none"); // Ẩn openmap
+      }
+    }
+
+    var markerLayer;
+
+    function openmap(lat1, lon1) {
+      const key = 'YwIwHi1e7tx1uvAjxmE5';
+      const source = new ol.source.TileJSON({
+        url: `https://api.maptiler.com/maps/streets-v2/tiles.json?key=${key}`,
+        tileSize: 512,
+        crossOrigin: 'anonymous'
+      });
+
+      const attribution = new ol.control.Attribution({
+        collapsible: false,
+      });
+
+      const map = new ol.Map({
+        layers: [
+          new ol.layer.Tile({
+            source: source
+          })
+        ],
+        controls: ol.control.defaults.defaults({attribution: false}).extend([attribution]),
+        target: 'openmap',
+        view: new ol.View({
+          constrainResolution: true,
+          center: ol.proj.fromLonLat([lon1, lat1]),
+          zoom: 15
+        })
+      });
+
+      // Create a reference to the marker feature
+      const marker = new ol.Feature({
+        geometry: new ol.geom.Point(ol.proj.fromLonLat([lon1, lat1])),
+      });
+      const markerSource = new ol.source.Vector({
+        features: [marker]
+      });
+      markerLayer = new ol.layer.Vector({
+        source: markerSource,
+        style: new ol.style.Style({
+          image: new ol.style.Icon({
+            anchor: [0.5, 1],
+            crossOrigin: 'anonymous',
+            src: '/client_assets/images/marker.png',
+          })
+        })
+      });
+      map.addLayer(markerLayer);
+
+      function centerMap(latitude, longitude) {
+        var view = map.getView();
+        view.setCenter(ol.proj.fromLonLat([longitude, latitude]));
+        view.setZoom(17);
+      }
+
+      // Thêm chức năng chọn vị trí khi nhấp chuột vào bản đồ
+      map.on('click', function (event) {
+        var coordinate = event.coordinate;
+        var lonlat = ol.proj.toLonLat(coordinate);
+        var latitude = lonlat[1];
+        var longitude = lonlat[0];
+        // Gửi vị trí được chọn cho server hoặc xử lý theo yêu cầu của bạn
+        console.log('Selected Location:', latitude, longitude);
+        var nominatimApiUrl = "https://nominatim.openstreetmap.org/reverse?format=json&lat=" + latitude + "&lon=" + longitude;
+
+        $.ajax({
+          url: nominatimApiUrl,
+          type: "GET",
+          dataType: "json",
+          success: function (response) {
+            var address = response.display_name;
+            document.getElementById("address").value = address;
+
+            // Update marker position
+            marker.setGeometry(new ol.geom.Point(coordinate));
+          },
+          error: function (xhr, status, error) {
+            console.log("Error: " + error);
+          }
+        });
+      });
+
+      // Xử lý sự kiện tìm kiếm
+      var searchInput = document.getElementById("address");
+      searchInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          searchAddress();
+        }
+      });
+
+      function searchAddress() {
+        var address = searchInput.value;
+        var addressApiUrl = "https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(address);
+
+        $.ajax({
+          url: addressApiUrl,
+          type: "GET",
+          dataType: "json",
+          success: function (response) {
+            if (response.length > 0) {
+              var latitude = response[0].lat;
+              var longitude = response[0].lon;
+              var coordinate = ol.proj.fromLonLat([longitude, latitude]);
+              marker.setGeometry(new ol.geom.Point(coordinate));
+            } else {
+              alert("Không tìm thấy địa chỉ trên bản đồ.");
+            }
+          },
+          error: function (xhr, status, error) {
+            console.log("Error: " + error);
+          }
+        });
+      }
+    }
+  </script>
+</div>
+</body>
+</html>

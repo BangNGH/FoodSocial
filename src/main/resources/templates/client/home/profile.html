@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/client_layout}"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang cá nhân</title>
+    <style>
+        .mgt {
+            margin-top: 15px;
+        }
+
+        .rounded-avatar {
+            width: 160px; /* Điều chỉnh kích thước ảnh theo mong muốn */
+            height: 160px; /* Điều chỉnh kích thước ảnh theo mong muốn */
+            border-radius: 50%; /* Làm cho ảnh thành hình tròn */
+            object-fit: cover; /* Đảm bảo hình ảnh bị cắt tỉa để vừa trong kích thước khung */
+        }
+        .mgb {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="main-wrapper">
+        <div class="profile-menu-area bg-white"
+             style="margin-top: 70px;">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-3 col-md-3">
+                        <div>
+                            <figure class="profile-thumb-middle" style="width: 100px;height:100px">
+                                <img th:unless="${user.avatarImagePath}" alt="avatar-image"
+                                     src="/client_assets/images/davatar.png"/>
+                                <img th:if="${user.avatarImagePath}" alt="avatar-image"
+                                     th:src="@{${user.avatarImagePath}}"/>
+                            </figure>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 offset-lg-1">
+                        <div class="profile-menu-wrapper">
+                            <div class="main-menu-inner header-top-navigation">
+                                <nav>
+                                    <ul class="main-menu">
+                                        <li><a href="#" id="follower" th:text="${user.followers.size()}"></a><p>followers</p></li>
+                                        <li><a href="#" th:text="${user.following.size()}"></a><p>following</p></li>
+                                        <!-- <li class="d-inline-block d-md-none"><a href="profile.html">edit profile</a></li> -->
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-3 d-none d-md-block">
+                        <div th:if="${myAccount}" class="profile-edit-panel">
+                            <button name="share" class="share-text-field edit-btn" aria-disabled="true"
+                                    data-bs-toggle="modal" data-bs-target="#textbox">Cập nhật tài khoản
+                            </button>
+                        </div>
+                        <div id="followContainer" th:unless="${myAccount}" class="profile-edit-panel">
+
+                            <button th:unless="${follwed}" name="follow" th:id="${user.id}" th:attr="onclick=|follow('${user.id}')|" class="follow share-text-field edit-btn">Theo dõi
+                            </button>
+
+                            <button th:if="${follwed}" name="follow" th:id="${user.id}" th:attr="onclick=|follow('${user.id}')|" style="background-color: #e5e5e5;color: black;" class="follow share-text-field edit-btn">Đang theo dõi
+                            </button>
+
+                        </div>
+                        <script>
+                            function follow(id) {
+                                $.ajax({
+                                    url: '/api/follow',
+                                    type: 'GET',
+                                    data: {id: id},
+                                    success: function (response) {
+                                        // Cập nhật follow
+                                        var followCountA = document.querySelector('#follower');
+
+                                        const buttonFollow = document.querySelector('.follow');
+                                        if (response === true) {
+                                            buttonFollow.innerText = 'Đang theo dõi';
+                                            buttonFollow.setAttribute('style','background-color: #e5e5e5;color: black;');
+
+                                            var likeCount = parseInt(followCountA.innerText);
+                                            likeCount++;
+                                            followCountA.innerText = likeCount.toString();
+                                        } else {
+                                            buttonFollow.innerText = 'Theo dõi'
+                                            buttonFollow.setAttribute('style','');
+                                            var likeCount = parseInt(followCountA.innerText);
+                                            likeCount--;
+                                            followCountA.innerText = likeCount.toString();
+                                            }
+
+                                    },
+                                    error: function (error) {
+                                        console.log('Error:', error);
+                                    }
+                                });
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 order-2 order-lg-1">
+                    <aside class="widget-area profile-sidebar">
+                        <div th:if="${success}" th:text="${success}" class="alert alert-success"
+                             style="display: flex; justify-content: center; color: white;">
+                        </div>
+                        <div th:if="${raMessage}" class="alert alert-success text-center">
+                            [[${raMessage}]]
+                        </div>
+                        <div th:if="${error}" th:text="${error}" class="alert alert-danger"
+                        >
+                        </div>
+
+                        <!-- widget single item start -->
+                        <div class="card widget-item">
+                            <h4 class="widget-title" th:text="${user.fullName}"></h4>
+                            <div class="widget-body">
+                                <div class="about-author">
+                                    <p th:unless="${user.userInfo.otherInfo}" th:text="' Bạn đang nghĩ gì?'"></p>
+                                    <p th:if="${user.userInfo.otherInfo}" th:text="${user.userInfo.otherInfo}"></p>
+                                    <ul class="author-into-list">
+                                        <li><a><i class="bi bi-office-bag"></i><a th:if="${user.userInfo.currentJob}"
+                                                                                  th:text="'Hiện đang là '+${user.userInfo.currentJob}"></a><a
+                                                th:unless="${user.userInfo.currentJob}">Nghề nghiệp?</a></a></li>
+                                        <li><a><i class="bi bi-worker-cap"></i><a th:if="${user.userInfo.workingAt}"
+                                                                                  th:text="'Làm việc tại '+${user.userInfo.workingAt}"></a><a
+                                                th:unless="${user.userInfo.workingAt}">Làm việc tại?</a></a></li>
+                                        <li><a><i class="bi bi-location-pointer"></i><a
+                                                th:if="${user.userInfo.livingAt}"
+                                                th:text="'Sống tại '+${user.userInfo.livingAt}"></a><a
+                                                th:unless="${user.userInfo.livingAt}">Sống tại?</a></a></li>
+                                        <li>
+                                            <a>
+                                                <i class="bi bi-playing-card"></i><a th:if="${user.userInfo.favorites}"
+                                                                                    th:text="'Sở thích '+${user.userInfo.favorites}">
+
+                                                 </a>
+                                                        <a th:unless="${user.userInfo.favorites}">Sở thích?
+                                                        </a>
+                                                 </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- widget single item end -->
+                    </aside>
+                </div>
+
+                <div class="col-lg-6 order-1 order-lg-2">
+                    <!-- share box start -->
+                    <div class="card card-small">
+                        <div>
+                            <a href="/post" class="share-box-inner">
+                                <!-- share content box start -->
+                                <button class="share-content-box w-100" type="submit" style="text-align: center">
+                                    <div class="share-text-box">
+                                        <p class="btn-outline-dark"><i class="bi bi-bowl"></i> Viết món ăn của bạn</p>
+                                    </div>
+                                </button>
+                            </a>
+                            <!-- Modal start -->
+                            <div class="modal fade" id="textbox" aria-labelledby="textbox">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Cập Nhật Thông Tin</h5>
+                                            <button type="button" class="close" data-bs-dismiss="modal"
+                                                    aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <form th:action="@{/updateInfo}" th:object="${userInfo}" method="post"
+                                              enctype="multipart/form-data">
+                                            <input type="hidden" th:field="*{id}">
+                                            <div class="modal-body custom-scroll">
+                                                <div th:if="${errorMessage}" class="alert alert-danger">
+                                                    <p th:text="${errorMessage}"></p>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6 col-12 mgb">
+                                                        <div class="form-group">
+                                                            <label for="fullName">Họ tên</label>
+                                                            <input type="text" id="fullName" class="form-control"
+                                                                   name="fullName"
+                                                                   th:field="*{user.fullName}">
+                                                            <div class="invalid-feedback"
+                                                                 th:errors="*{user.fullName}"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-12 mgb">
+                                                        <div class="form-group">
+                                                            <label for="job">Nghề nghiệp</label>
+                                                            <input type="text" id="job" name="job" class="form-control"
+                                                                   th:field="*{currentJob}">
+                                                            <div class="invalid-feedback"
+                                                                 th:errors="*{currentJob}"></div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-6 col-12 mgb">
+                                                        <div class="form-group">
+                                                            <label for="workingAt">Làm việc tại</label>
+                                                            <input type="text" id="workingAt" class="form-control"
+                                                                   name="workingAt"
+                                                                   th:field="*{workingAt}">
+                                                            <div class="invalid-feedback"
+                                                                 th:errors="*{workingAt}"></div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-6 col-12 mgb">
+                                                        <div class="form-group">
+                                                            <label for="favorites">Sở thích</label>
+                                                            <input type="text" id="favorites" class="form-control"
+                                                                   name="favorites"
+                                                                   th:field="*{favorites}">
+                                                            <div class="invalid-feedback"
+                                                                 th:errors="*{favorites}"></div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-6 col-12 mgb">
+                                                        <div class="form-group">
+                                                            <label for="dateOfBirth">Ngày sinh</label>
+                                                            <input type="date" id="dateOfBirth" class="form-control"
+                                                                   name="dateOfBirth"
+                                                                   th:field="*{dateOfBirth}">
+                                                            <div class="invalid-feedback"
+                                                                 th:errors="*{dateOfBirth}"></div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-6 col-12 mgb">
+                                                        <div class="form-group">
+                                                            <label for="dateOfBirth">Sống tại</label>
+                                                            <input type="text" id="livingAt" class="form-control"
+                                                                   name="livingAt"
+                                                                   th:field="*{livingAt}">
+                                                            <div class="invalid-feedback" th:errors="*{livingAt}"></div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-6 col-12 mgb">
+                                                        <label for="dateOfBirth">Giới tính</label>
+                                                        <div class="form-group">
+
+                                                            <select class="form-control" th:field="*{user.gender}">
+                                                                <option value="male">Nam</option>
+                                                                <option value="female">Nữ</option>
+                                                                <option value="order">Khác</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-12 mgb">
+                                                        <div class="form-group">
+                                                            <input type="file" required name="imageFile" id="imageFile"
+                                                                   accept=".png, .jpg, .jpeg"
+                                                                   class="form-control d-none"/>
+                                                            <label style="cursor: pointer;font-weight: bold;"
+                                                                   for="imageFile"
+                                                                   class="col-form-label text-center">
+                                                                <!-- Sử dụng lớp text-center ở đây -->
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="20"
+                                                                     height="20" fill="none"
+                                                                     viewBox="0 0 20 20"
+                                                                     class="loading:hidden mise-icon mise-icon-camera">
+                                                                    <path stroke="currentColor" stroke-width="1.3"
+                                                                          d="M15 17.5H5a3.333 3.333 0 0 1-3.333-3.333v-7.5c0-.92.746-1.667 1.667-1.667h1.608c.557 0 1.077-.279 1.386-.742l.677-1.016c.31-.463.83-.742 1.387-.742h3.216c.557 0 1.078.279 1.387.742l.677 1.016c.31.463.83.742 1.387.742h1.608c.92 0 1.666.746 1.666 1.667v7.5A3.333 3.333 0 0 1 15 17.5Z"></path>
+                                                                    <circle cx="4.167" cy="7.5" r=".833"
+                                                                            fill="currentColor" stroke="currentColor"
+                                                                            stroke-width=".1"
+                                                                            transform="rotate(-180 4.167 7.5)"></circle>
+                                                                    <circle cx="10" cy="10.834" r="2.5"
+                                                                            stroke="currentColor"
+                                                                            stroke-width="1.3"></circle>
+                                                                </svg>
+                                                                Thay đổi ảnh đại diện của bạn
+                                                            </label>
+                                                            <div id="thumbnailDiv"
+                                                                 style="max-width: 100%; max-height: 100%; margin-top: 10px;">
+                                                                <img id="thumbnail" th:unless="${user.avatarImagePath}" class="rounded-avatar" alt="avatar-image"
+                                                                     src="/client_assets/images/davatar.png"/>
+                                                                <img id="thumbnail" th:if="${user.avatarImagePath}" class="rounded-avatar" alt="avatar-image"
+                                                                     th:src="@{${user.avatarImagePath}}"/>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                    <textarea name="share" class="share-field-big custom-scroll"
+                                                              th:field="*{otherInfo}"
+                                                              placeholder="Hãy viết gì đó về bạn."></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="post-share-btn" data-bs-dismiss="modal">
+                                                    Huỷ
+                                                </button>
+                                                <button type="submit" class="post-share-btn">Lưu</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Modal end -->
+                        </div>
+                    </div>
+                    <!-- share box end -->
+                    <th:block th:if="${listPosts}" th:each="post : ${listPosts}">
+                        <!-- post status start -->
+                        <div class="card">
+                            <!-- post title start -->
+                            <div class="post-title d-flex align-items-center">
+                                <!-- profile picture end -->
+                                <div class="profile-thumb">
+                                    <a th:href="@{'/profile/' +${post.user.id}}">
+                                        <figure class="profile-thumb-middle">
+                                            <img th:unless="${post.user.avatarImagePath}" alt="avatar-image"
+                                                 src="/client_assets/images/davatar.png"/>
+                                            <img th:if="${post.user.avatarImagePath}" alt="avatar-image"
+                                                 th:src="@{${post.user.avatarImagePath}}"/>
+
+                                            </figure>
+                                    </a>
+                                </div>
+                                <!-- profile picture end -->
+
+                                <div class="posted-author">
+                                    <h6 class="author"><a href="/profile" th:text="${user.fullName}"></a></h6>
+                                    <span class="post-time" th:text="${#dates.format(post.createdAt, 'HH:mm')} + ' Ngày ' + ${#dates.format(post.createdAt, 'dd/MM/yyyy')}"></span>
+                                </div>
+
+                                <div class="post-settings-bar">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                    <div class="post-settings arrow-shape">
+                                        <ul>
+                                            <li>
+                                                <button><a th:href="@{'/post-edit/' +${post.id}}">Sửa bài viết</a></button>
+                                            </li>
+                                            <li>
+                                                <button><a th:href="@{'/post-details/' +${post.id}}">Xem chi tiết</a></button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- post title start -->
+                            <div class="post-content">
+                                <h4 class="widget-title text-center" style="margin-bottom: 17px;margin-top: 17px;" th:text="${post.foodName}"></h4>
+                                <p class="post-desc" th:text="${post.description}">
+                                </p>
+                                <div class="post-thumb-gallery img-gallery">
+                                    <div class="row g-0">
+                                        <div class="">
+                                            <figure class="post-thumb">
+                                                <a class="gallery-selector"
+                                                   th:href="@{${post.postImagePath}}">
+                                                    <img th:src="@{${post.postImagePath}}" alt="post image">
+                                                </a>
+                                            </figure>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="post-meta">
+                                    <button class="post-meta-like" th:id="'likeBtn_' + ${post.id}" style="position: relative;display: inline-block" th:attr="onclick=|likePost('${post.id}')|">
+                                        <img class="heart" src="client_assets/images/icons/heart.png" style="position: absolute;top: 0;left: 0;z-index: 1" alt="">
+                                        <th:block th:each="like : ${post.likes}">
+                                            <img th:if="${like.user==user}" class="heart-color" style="position: absolute;top: 0;left: 0;z-index: 0" src="client_assets/images/icons/heart-color.png" alt="">
+                                        </th:block>
+                                        <span style="margin-left: 20px;" th:id="'likeCount_' + ${post.id}" th:text="${post.likeCount}"></span>
+                                    </button>
+                                    <script>
+                                        function likePost(id) {
+                                            $.ajax({
+                                                url: '/api/like',
+                                                type: 'GET',
+                                                data: {id: id},
+                                                success: function (response) {
+                                                    // Cập nhật số lượt like trên giao diện cho post cụ thể
+                                                    const buttonLike = document.querySelector('#likeBtn_' + id);
+                                                    var likeCountSpan = document.querySelector('#likeCount_' + id);
+                                                    if (response === true) {
+                                                        var likeCount = parseInt(likeCountSpan.innerText);
+                                                        likeCount++;
+                                                        likeCountSpan.innerText = likeCount.toString();
+                                                        const liked = `<img class="heart-color" style="position: absolute;top: 0;left: 0;z-index: 0" src="client_assets/images/icons/heart-color.png" alt="">`;
+                                                        buttonLike.innerHTML+=liked;
+                                                    } else {
+                                                        const imgColor =buttonLike.querySelectorAll('.heart-color');
+                                                        for (let i=0;i<imgColor.length;i++) {
+                                                            buttonLike.removeChild(imgColor[i])
+
+                                                        }
+                                                        var likeCount = parseInt(likeCountSpan.innerText);
+                                                        likeCount--;
+                                                        likeCountSpan.innerText = likeCount.toString();
+                                                    }
+
+                                                },
+                                                error: function (error) {
+                                                    console.log('Error:', error);
+                                                }
+                                            });
+                                        }
+                                    </script>
+                                    <ul class="comment-share-meta">
+                                        <li>
+                                            <a th:href="@{'/post-details/' +${post.id}}" class="post-comment">
+                                                <i class="bi bi-chat-bubble"></i>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <button class="post-share">
+                                                <i class="bi bi-share"></i>
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </th:block>
+                    <th:block th:if="${listPostsEmpty}">
+                        <div class="card">
+                            <!-- post title start -->
+                            <div class="post-title d-flex align-items-center">
+                                <!-- profile picture end -->
+                                <div class="profile-thumb">
+                                    <a href="#">
+                                        <figure class="profile-thumb-middle">
+                                            <img th:unless="${user.avatarImagePath}" alt="avatar-image"
+                                                 src="/client_assets/images/davatar.png"/>
+                                            <img th:if="${user.avatarImagePath}" alt="avatar-image"
+                                                 th:src="@{${user.avatarImagePath}}"/>
+                                        </figure>
+                                    </a>
+                                </div>
+                                <!-- profile picture end -->
+
+                                <div class="posted-author">
+                                    <h6 class="author"><a href="/profile" th:text="${user.fullName}"></a></h6>
+                                    <span class="post-time"></span>
+                                </div>
+
+                                <div class="post-settings-bar">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                    <div class="post-settings arrow-shape">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- post title start -->
+                            <div class="post-content">
+                                <p class="post-desc">Bạn chưa có hoạt động nào cả, hãy chia
+                                    sẽ những công thức thú vị của mình ngay nào
+                                </p>
+                                <div class="post-thumb-gallery img-gallery">
+                                    <div class="row g-0">
+                                        <div class="">
+                                            <figure class="post-thumb">
+                                                <a class="gallery-selector"
+                                                   href="@{/client_assets/images/post/post-2.jpg">
+                                                    <img src="/client_assets/images/oops.png" alt="post image">
+                                                </a>
+                                            </figure>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('#imageFile').change(function () {
+                    showImageThumbnail(this);
+                });
+
+              /* if($('.follow')){
+                   const searchRS = document.querySelector('#followContainer');
+                   const search = `<button name="follow" id="${user.id}" th:attr="onclick=|follow('${user.id}')|" style="background-color: #e5e5e5;color: black;" class="follow share-text-field edit-btn">Đang theo dõi`;
+                   searchRS.innerHTML += search;
+               };*/
+            });
+
+            function showImageThumbnail(inputFile) {
+                file = inputFile.files[0];
+                reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#thumbnail').attr('src', e.target.result);
+                };
+
+                reader.readAsDataURL(file);
+            }
+        </script>
+    </div>
+</div>
+</body>
+</html>

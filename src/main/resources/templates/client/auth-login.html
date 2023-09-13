@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Đăng Nhập</title>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.1.1/css/all.css">
+	<link rel="stylesheet" th:href="@{/client_assets/css/vendor/bootstrap.min.css}">
+	<link rel="shortcut icon" href="/client_assets/images/logo/logo.png"
+		  type="image/x-icon">
+	<link rel="stylesheet" th:href="@{/client_assets/css/app.css}">
+</head>
+
+<body>
+	<div id="auth">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-5 col-sm-12 mx-auto">
+					<div class="card pt-4">
+						<div class="card-body">
+							<div class="text-center mb-5">
+								<a th:href="${url}">
+									<img src="client_assets/images/logo/logo.png" height="48" class='mb-4'>
+								</a>
+								<h3>Đăng nhập</h3>
+								<p>Mạng xã hội chia sẻ thực đơn của riêng bạn</p>
+							</div>
+							<form th:action="@{/login}" method="post">
+								<div th:if="${param.error}" class="alert alert-error"
+									 style="display: flex; justify-content: center; color: red;">
+									Sai tài khoản hoặc mật khẩu!
+								</div>
+								<div th:if="${param.logout}" class="alert alert-success"
+									 style="display: flex; justify-content: center; color: white;">
+									Đăng xuất thành công.
+								</div>
+								<div th:if="${success}" th:text="${success}" class="alert alert-success"
+									 style="display: flex; justify-content: center; color: white;">
+								</div>
+								<div th:if="${error}" th:utext="${error}" class="alert alert-danger"
+									>
+								</div>
+								<div class="form-group position-relative has-icon-left">
+									<label for="username">Email</label>
+									<div class="position-relative">
+										<input type="text" name="username" required class="form-control" id="username">
+										<div class="form-control-icon">
+											<i class="fa-regular fa-user"></i>
+										</div>
+									</div>
+								</div>
+								<div class="form-group position-relative has-icon-left">
+									<div class="clearfix">
+										<label for="password">Mật khẩu</label> <a style="float: right;"
+																				  th:href="@{/forgot-password}"
+																				  class='float-end'> <small style="color: #ff3c23">Quên mật
+										khẩu?</small>
+									</a>
+									</div>
+									<div class="position-relative">
+										<input type="password" name="password" required minlength="6" maxlength="20" class="form-control" id="password">
+										<div class="form-control-icon">
+											<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+												 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+												 stroke-linecap="round" stroke-linejoin="round"
+												 class="feather feather-lock">
+												<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+												<path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+											</svg>
+										</div>
+									</div>
+								</div>
+
+								<div class='form-check clearfix my-4'>
+									<div class="checkbox float-start">
+										<input type="checkbox" id="checkbox1" class='form-check-input' name="remember-me">
+										<label for="checkbox1">Lưu tài khoản</label>
+									</div>
+									<div class="float-end">
+										<a th:href="@{/register}" style="color: #ff3c23">Chưa có tài khoản? Đăng ký tại đây</a>
+									</div>
+								</div>
+								<div class="clearfix">
+									<button style="float: right;width: 100%;background-color: #dc4734" type="submit"
+											class="btn btn-primary float-end">Đăng nhập
+									</button>
+								</div>
+							</form>
+							<div class="divider">
+								<div class="divider-text">HOẶC</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6">
+									<button class="btn btn-block mb-2 btn-primary"
+											style="background-color:#ac473e;">
+										<a href="/oauth2/authorization/google" style="color:white">
+											<i class="fab fa-google-plus-g"></i>
+											Đăng nhập Google
+										</a>
+									</button>
+								</div>
+								<div class="col-sm-6">
+									<button class="btn btn-block mb-2 btn-secondary"
+											style="background-color:#3f4750;">
+										<a href="/oauth2/authorization/github" style="color:white"><i
+												class="fa-brands fa-github"></i>Đăng nhập Gihub</a>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<script th:src="@{/client_assets/js/feather.min.js}"></script>
+	<script th:src="@{/client_assets/js/app.js}"></script>
+	<script th:src="@{/client_assets/js/main2.js}"></script>
+</body>
+
+</html>
