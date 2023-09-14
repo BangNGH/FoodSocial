@@ -3,6 +3,7 @@ package com.example.foodsocialproject.rest_controller;
 import com.example.foodsocialproject.entity.*;
 import com.example.foodsocialproject.services.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -59,8 +60,13 @@ public class HomeRestController {
 
     @GetMapping("/search")
     @ResponseBody
-    public List<Posts> searchPost(@RequestParam("q") String q) {
+    public List<Posts> searchPost(@RequestParam("q") String q, HttpSession session) {
         List<Posts> posts = postsService.search(q);
+        if (posts.size()>0) {
+            session.setAttribute("ads1", q);
+            System.out.println("key: " + q);
+
+        }
         return posts;
     }
 

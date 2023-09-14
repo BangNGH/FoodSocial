@@ -111,6 +111,7 @@
                             </div>
                             <input type="hidden" id="formattedDateTime" name="formattedDateTime" value="">
                         </div>
+                        <input type="hidden" name="productID" id="productID">
                         <div class="card" id="ingredientContainer">
                             <h4 class="widget-title">Chọn nguyên liệu chính cho bài thi</h4>
                             <div id="tbody" class="mgb">
@@ -125,40 +126,18 @@
                                     <img id="selectedImage1" style="display: none;" class="thumbnailShow" src=""
                                          alt="Hình ảnh sản phẩm">
                                 </div>
-                            </div>
-
-                            <div class="form-group mgb" id="">
-                                <!-- Danh sách các nguyên liệu được chọn từ trong list có tên là products từ thẻ select-->
-                                <select id="yourSelectId">
-                                    <option value="">Chọn nguyên liệu</option>
-                                    <option th:each="product : ${products}" th:value="${product.id}"
-                                            th:text="${product.name}" th:data-id="${product.id}"
-                                            th:data-image="${product.img}"></option>
-                                </select>
-                                <img id="selectedImage" style="display: none;" class="thumbnailShow" src=""
-                                     alt="Hình ảnh sản phẩm">
-
-                            </div>
-
-                            <script>
-                                // JavaScript
-                                $(document).ready(function () {
-                                    $('#yourSelectId').change(function () {
-                                        var selectedImage = '/product-images/' + $(this).find(':selected').data('id') + '/' + $(this).find(':selected').data('image');
-                                        $('#selectedImage').attr('src', selectedImage);
-                                        $('.thumbnailShow').show();
+                                <script>
+                                    // JavaScript
+                                    $(document).ready(function () {
+                                        $('#yourSelectId1').change(function () {
+                                            var selectedImage = '/product-images/' + $(this).find(':selected').data('id') + '/' + $(this).find(':selected').data('image');
+                                            $('#selectedImage1').attr('src', selectedImage);
+                                            $('.thumbnailShow').show();
+                                        });
                                     });
-                                    $('#yourSelectId1').change(function () {
-                                        var selectedImage = '/product-images/' + $(this).find(':selected').data('id') + '/' + $(this).find(':selected').data('image');
-                                        $('#selectedImage1').attr('src', selectedImage);
-                                        $('.thumbnailShow').show();
-                                    });
-                                });
 
-                            </script>
-                            <button type="button" class="bi bi-plus" style="font-weight: bold;font-size: large"
-                                    id="addIngredientButton">
-                            </button>
+                                </script>
+                            </div>
                         </div>
 
                         <button type="submit" class="post ">
@@ -211,6 +190,7 @@
 
             const startTimeInput = document.querySelector('#startTime');
             const inp = document.querySelector('#endTime');
+            const yourSelectId1 = document.querySelector('#yourSelectId1');
 
             startTimeInput.onchange = () => {
                 // Lấy giá trị từ input datetime-local
@@ -222,6 +202,11 @@
 // Gán giá trị formattedDateTime vào trường ẩn
                 document.getElementById('formattedSDateTime').value = formattedSDateTime;
                 updateEndTime();
+            }
+            yourSelectId1.onchange=()=> {
+                // Lấy giá trị từ input datetime-local
+                const id = document.getElementById('yourSelectId1').value;
+                document.getElementById('productID').value = id;
             }
             inp.onchange = () => {
                 // Lấy giá trị từ input datetime-local

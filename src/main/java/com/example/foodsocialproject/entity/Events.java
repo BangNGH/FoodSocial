@@ -53,9 +53,9 @@ public class Events {
     @JsonIgnore
     private Set<Users> participants = new HashSet<>();
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "event", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Product> ingredients = new ArrayList<>();
+    private event_ingredient event_ingredient;
     @Transient
     public String getEventImagePath() {
         if (id == null||event_image==null) {

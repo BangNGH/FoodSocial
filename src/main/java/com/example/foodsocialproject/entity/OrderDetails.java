@@ -1,9 +1,12 @@
 package com.example.foodsocialproject.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "order_details")
 public class OrderDetails {

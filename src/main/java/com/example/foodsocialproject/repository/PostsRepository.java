@@ -27,6 +27,6 @@ public interface PostsRepository extends JpaRepository<Posts, UUID> {
     @Query("SELECT p FROM Posts p order by p.likeCount desc limit 3")
     List<Posts> get3PostsTopLike();
 
-    @Query("SELECT u FROM Users u left join Posts p on u.id = p.user.id group by u.id, u.email order by SUM(p.likeCount) desc limit 5")
-    List<Users> getTop5User();
+    @Query("SELECT u FROM Users u left join Posts p on u.id = p.user.id group by u.id, u.email order by SUM(p.likeCount) desc limit 3")
+    List<Users> getTop3User();
 }

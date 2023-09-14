@@ -49,8 +49,10 @@
                                             <!-- profile picture end -->
 
                                             <div class="unorder-list-info">
-                                                <h3 class="list-title"><a th:href="@{'/profile/' +${user.id}}" th:text="${user.fullName}"></a></h3>
-                                                <p class="list-subtitle"><a th:text="${user.userInfo.otherInfo}"></a></p>
+                                                <h3 class="list-title"><a th:href="@{'/profile/' +${user.id}}"
+                                                                          th:text="${user.fullName}"></a></h3>
+                                                <p class="list-subtitle"><a th:text="${user.userInfo.otherInfo}"></a>
+                                                </p>
                                             </div>
                                         </li>
                                     </th:block>
@@ -78,13 +80,17 @@
                                             <!-- profile picture end -->
 
                                             <div class="unorder-list-info">
-                                                <h3 class="list-title"><a th:href="@{'/post-details/' +${post.id}}" th:text="${post.foodName}"></a></h3>
-                                                <p class="list-subtitle"><a th:href="@{'/profile/' +${post.user.id}}" th:text="${post.user.fullName}"></a></p>
+                                                <h3 class="list-title"><a th:href="@{'/post-details/' +${post.id}}"
+                                                                          th:text="${post.foodName}"></a></h3>
+                                                <p class="list-subtitle"><a th:href="@{'/profile/' +${post.user.id}}"
+                                                                            th:text="${post.user.fullName}"></a></p>
                                             </div>
-                                            <p th:text="${post.likeCount}" style="margin-top: 20px;margin-right: 5px;"></p>
+                                            <p th:text="${post.likeCount}"
+                                               style="margin-top: 20px;margin-right: 5px;"></p>
                                             <button class="like-button active">
                                                 <img class="heart" src="client_assets/images/icons/heart.png" alt="">
-                                                <img class="heart-color" src="client_assets/images/icons/heart-color.png"
+                                                <img class="heart-color"
+                                                     src="client_assets/images/icons/heart-color.png"
                                                      alt="">
                                             </button>
                                         </li>
@@ -116,13 +122,13 @@
                                 </button>
                             </a>
                         </div>
-                        <div class="card card-small" style="
+                        <div sec:authorize="hasAnyAuthority('ADMIN')" class="card card-small" style="
     max-width: fit-content;
     border-radius: 30px;
     margin: 0 auto;
     margin-bottom: 10px;
 ">
-                            <a sec:authorize="hasAnyAuthority('ADMIN')" href="/create-event" class="share-box-inner">
+                            <a href="/create-event" class="share-box-inner">
                                 <!-- share content box start -->
                                 <button class="share-content-box w-100" type="submit" style="text-align: center">
                                     <div class="share-text-box">
@@ -144,15 +150,21 @@
                             <div class="friends-search share-content-box w-100">
                                 <div>
                                     <form action="/search-post-by-ingredients" class="search-box share-text-box">
-                                        <input style="position: relative" type="text" name="searchPost" class="share-text-field search-field" placeholder="Tìm món ăn hoặc nguyên liệu..." id="searchPost">
-                                        <a style="position: absolute; cursor: pointer; right: 10px; top: 10px" id="click_to_record"><i style="font-size: 20px" class='bx bxs-microphone'></i></a>
+                                        <input style="position: relative" type="text" name="searchPost"
+                                               class="share-text-field search-field"
+                                               placeholder="Tìm món ăn hoặc nguyên liệu..." id="searchPost">
+                                        <a style="position: absolute; cursor: pointer; right: 10px; top: 10px"
+                                           id="click_to_record"><i style="font-size: 20px"
+                                                                   class='bx bxs-microphone'></i></a>
                                         </input>
                                     </form>
                                 </div>
                             </div>
                             <div style="position: relative">
-                                <p style="margin-top: 10px;margin-bottom: 0;font-style: italic;font-weight: bold">Gợi ý hôm nay</p>
-                                <div class="frnd-search-inner custom-scroll" style="margin: 0 0;background-color: #f1f1f1;border-radius: 30px;height: fit-content;padding-bottom: 20px;">
+                                <p style="margin-top: 10px;margin-bottom: 0;font-style: italic;font-weight: bold">Gợi ý
+                                    hôm nay</p>
+                                <div class="frnd-search-inner custom-scroll"
+                                     style="margin: 0 0;background-color: #f1f1f1;border-radius: 30px;height: fit-content;padding-bottom: 20px;">
                                     <ul id="searchPostLi" style="margin-top: 20px;">
                                     </ul>
                                 </div>
@@ -170,6 +182,7 @@
                                         fetchSearchResults(q);
 
                                     });
+
                                     function fetchSearchResults(q) {
                                         $.ajax({
                                             url: '/api/search',
@@ -219,7 +232,7 @@
                                         });
                                     }
 
-                                    document.getElementById("click_to_record").addEventListener('click',function(){
+                                    document.getElementById("click_to_record").addEventListener('click', function () {
                                         var speech = true;
                                         window.SpeechRecognition = window.webkitSpeechRecognition;
                                         const recognition = new SpeechRecognition();
@@ -296,7 +309,8 @@
                             </div>
                             <!-- post title start -->
                             <div class="post-content">
-                                <h4 class="widget-title text-center" style="margin-bottom: 17px;margin-top: 17px;color: #ff7474"
+                                <h4 class="widget-title text-center"
+                                    style="margin-bottom: 17px;margin-top: 17px;color: #ff7474"
                                     th:text="${event.event_name}"></h4>
                                 <p class="post-desc" th:text="${event.event_description}">
                                 </p>
@@ -313,11 +327,26 @@
                                     </div>
                                 </div>
                                 <div class="post-meta">
-                                    <div th:unless="${event.participants.contains(user)}" class="btn-wrapper text-right text-end">
-                                        <a th:href="'/join-event/'+${user.id}+'/'+${event.id}" class="theme-btn-1 btn btn-effect-1">Tham gia ngay</a>
+                                    <div sec:authorize="hasAnyAuthority('USER')">
+                                        <div th:unless="${event.participants.contains(user)}"
+                                             class="btn-wrapper text-right text-end">
+                                            <a th:href="'/join-event/'+${user.id}+'/'+${event.id}"
+                                               class="theme-btn-1 btn btn-effect-1">Tham gia ngay</a>
+                                        </div>
+                                        <div th:if="${event.participants.contains(user)}"
+                                             class="btn-wrapper text-right text-end">
+                                            <a style="background-color: #318749"
+                                               th:href="'/create-post-4event/'+${event.id}"
+                                               class="theme-btn-1 btn btn-effect-1">Viết bài dự thi</a>
+                                        </div>
                                     </div>
-                                    <div th:if="${event.participants.contains(user)}" class="btn-wrapper text-right text-end">
-                                        <a style="background-color: #318749" th:href="'/create-post-4event/'+${event.id}" class="theme-btn-1 btn btn-effect-1">Viết bài dự thi</a>
+                                    <div sec:authorize="hasAnyAuthority('ADMIN')">
+                                        <div
+                                             class="btn-wrapper text-right text-end">
+                                            <a style="background-color: #318749"
+                                               th:text="${event.participants.size()+' người đã tham gia'}"
+                                               class="theme-btn-1 btn btn-effect-1"></a>
+                                        </div>
                                     </div>
                                     <!--  share - comments-->
                                     <ul class="comment-share-meta">
@@ -370,7 +399,8 @@
                                     <div class="post-settings arrow-shape">
                                         <ul>
                                             <li>
-                                                <button><a th:href="@{'/post-details/' +${post.id}}">Xem chi tiết</a></button>
+                                                <button><a th:href="@{'/post-details/' +${post.id}}">Xem chi tiết</a>
+                                                </button>
                                             </li>
                                         </ul>
                                     </div>
@@ -378,7 +408,8 @@
                             </div>
                             <!-- post title start -->
                             <div class="post-content">
-                                <h4 class="widget-title text-center" style="margin-bottom: 17px;margin-top: 17px;" th:text="${post.foodName}"></h4>
+                                <h4 class="widget-title text-center" style="margin-bottom: 17px;margin-top: 17px;"
+                                    th:text="${post.foodName}"></h4>
                                 <p class="post-desc" th:text="${post.description}">
                                 </p>
                                 <div class="post-thumb-gallery img-gallery">
@@ -396,12 +427,18 @@
 
                                 <div class="post-meta">
                                     <!--button like post-->
-                                    <button class="post-meta-like" th:id="'likeBtn_' + ${post.id}" style="position: relative;display: inline-block" th:attr="onclick=|likePost('${post.id}')|">
-                                        <img class="heart" src="client_assets/images/icons/heart.png" style="position: absolute;top: 0;left: 0;z-index: 1" alt="">
+                                    <button class="post-meta-like" th:id="'likeBtn_' + ${post.id}"
+                                            style="position: relative;display: inline-block"
+                                            th:attr="onclick=|likePost('${post.id}')|">
+                                        <img class="heart" src="client_assets/images/icons/heart.png"
+                                             style="position: absolute;top: 0;left: 0;z-index: 1" alt="">
                                         <th:block th:each="like : ${post.likes}">
-                                            <img th:if="${like.user==user}" class="heart-color" style="position: absolute;top: 0;left: 0;z-index: 0" src="client_assets/images/icons/heart-color.png" alt="">
+                                            <img th:if="${like.user==user}" class="heart-color"
+                                                 style="position: absolute;top: 0;left: 0;z-index: 0"
+                                                 src="client_assets/images/icons/heart-color.png" alt="">
                                         </th:block>
-                                        <span style="margin-left: 20px;" th:id="'likeCount_' + ${post.id}" th:text="${post.likeCount}"></span>
+                                        <span style="margin-left: 20px;" th:id="'likeCount_' + ${post.id}"
+                                              th:text="${post.likeCount}"></span>
                                     </button>
                                     <script>
                                         function likePost(id) {
@@ -418,10 +455,10 @@
                                                         likeCount++;
                                                         likeCountSpan.innerText = likeCount.toString();
                                                         const liked = `<img class="heart-color" style="position: absolute;top: 0;left: 0;z-index: 0" src="client_assets/images/icons/heart-color.png" alt="">`;
-                                                        buttonLike.innerHTML+=liked;
+                                                        buttonLike.innerHTML += liked;
                                                     } else {
-                                                        const imgColor =buttonLike.querySelectorAll('.heart-color');
-                                                        for (let i=0;i<imgColor.length;i++) {
+                                                        const imgColor = buttonLike.querySelectorAll('.heart-color');
+                                                        for (let i = 0; i < imgColor.length; i++) {
                                                             buttonLike.removeChild(imgColor[i])
 
                                                         }
@@ -462,9 +499,12 @@
                         <div th:object="${product1}" class="card widget-item">
                             <h4 class="widget-title">Advertizement</h4>
                             <div class="widget-body">
-                                <div style="margin-bottom: 0px" class="ltn__product-item ltn__product-item-3 text-center">
+                                <div style="margin-bottom: 0px"
+                                     class="ltn__product-item ltn__product-item-3 text-center">
                                     <div class="product-img">
-                                        <a th:href="@{/shop/detail/{id}(id=${product1.id})}"><img style="z-index: unset" th:src="@{${product1.imagesPath}}" alt="#"></a>
+                                        <a th:href="@{/shop/detail/{id}(id=${product1.id})}"><img style="z-index: unset"
+                                                                                                  th:src="@{${product1.imagesPath}}"
+                                                                                                  alt="#"></a>
                                         <div class="product-badge">
                                             <ul>
                                                 <li class="sale-badge">New</li>
@@ -480,8 +520,10 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#add_to_cart_modal"
-                                                       th:onclick="'addToCart(\'' + ${product1.id} + '\')'" title="Add to Cart">
+                                                    <a href="#" data-bs-toggle="modal"
+                                                       data-bs-target="#add_to_cart_modal"
+                                                       th:onclick="'addToCart(\'' + ${product1.id} + '\')'"
+                                                       title="Add to Cart">
                                                         <i class="fas fa-shopping-cart"></i>
                                                     </a>
                                                 </li>
@@ -498,7 +540,8 @@
                                                 <li><a href="#"><i class="far fa-star"></i></a></li>
                                             </ul>
                                         </div>
-                                        <h2 class="product-title"><a th:href="@{/shop/detail/{id}(id=${product1.id})}" th:text="${product1.name}"></a></h2>
+                                        <h2 class="product-title"><a th:href="@{/shop/detail/{id}(id=${product1.id})}"
+                                                                     th:text="${product1.name}"></a></h2>
                                         <div class="product-price">
                                                 <span><span
                                                         th:text="${#numbers.formatDecimal(product1.price, 0, 'COMMA', 0, 'POINT')}"></span> VNĐ</span>
@@ -513,9 +556,12 @@
                         <div th:object="${product2}" class="card widget-item">
                             <h4 class="widget-title">Advertizement</h4>
                             <div class="widget-body">
-                                <div style="margin-bottom: 0px" class="ltn__product-item ltn__product-item-3 text-center">
+                                <div style="margin-bottom: 0px"
+                                     class="ltn__product-item ltn__product-item-3 text-center">
                                     <div class="product-img">
-                                        <a th:href="@{/shop/detail/{id}(id=${product2.id})}"><img style="z-index: unset" th:src="@{${product2.imagesPath}}" alt="#"></a>
+                                        <a th:href="@{/shop/detail/{id}(id=${product2.id})}"><img style="z-index: unset"
+                                                                                                  th:src="@{${product2.imagesPath}}"
+                                                                                                  alt="#"></a>
                                         <div class="product-badge">
                                             <ul>
                                                 <li class="sale-badge">New</li>
@@ -531,8 +577,10 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#add_to_cart_modal"
-                                                       th:onclick="'addToCart(\'' + ${product2.id} + '\')'" title="Add to Cart">
+                                                    <a href="#" data-bs-toggle="modal"
+                                                       data-bs-target="#add_to_cart_modal"
+                                                       th:onclick="'addToCart(\'' + ${product2.id} + '\')'"
+                                                       title="Add to Cart">
                                                         <i class="fas fa-shopping-cart"></i>
                                                     </a>
                                                 </li>
@@ -549,7 +597,8 @@
                                                 <li><a href="#"><i class="far fa-star"></i></a></li>
                                             </ul>
                                         </div>
-                                        <h2 class="product-title"><a th:href="@{/shop/detail/{id}(id=${product2.id})}" th:text="${product2.name}"></a></h2>
+                                        <h2 class="product-title"><a th:href="@{/shop/detail/{id}(id=${product2.id})}"
+                                                                     th:text="${product2.name}"></a></h2>
                                         <div class="product-price">
                                                 <span><span
                                                         th:text="${#numbers.formatDecimal(product2.price, 0, 'COMMA', 0, 'POINT')}"></span> VNĐ</span>
@@ -564,9 +613,12 @@
                         <div th:object="${product3}" class="card widget-item">
                             <h4 class="widget-title">Advertizement</h4>
                             <div class="widget-body">
-                                <div style="margin-bottom: 0px" class="ltn__product-item ltn__product-item-3 text-center">
+                                <div style="margin-bottom: 0px"
+                                     class="ltn__product-item ltn__product-item-3 text-center">
                                     <div class="product-img">
-                                        <a th:href="@{/shop/detail/{id}(id=${product3.id})}"><img style="z-index: unset" th:src="@{${product3.imagesPath}}" alt="#"></a>
+                                        <a th:href="@{/shop/detail/{id}(id=${product3.id})}"><img style="z-index: unset"
+                                                                                                  th:src="@{${product3.imagesPath}}"
+                                                                                                  alt="#"></a>
                                         <div class="product-badge">
                                             <ul>
                                                 <li class="sale-badge">New</li>
@@ -582,8 +634,10 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#add_to_cart_modal"
-                                                       th:onclick="'addToCart(\'' + ${product3.id} + '\')'" title="Add to Cart">
+                                                    <a href="#" data-bs-toggle="modal"
+                                                       data-bs-target="#add_to_cart_modal"
+                                                       th:onclick="'addToCart(\'' + ${product3.id} + '\')'"
+                                                       title="Add to Cart">
                                                         <i class="fas fa-shopping-cart"></i>
                                                     </a>
                                                 </li>
@@ -600,7 +654,8 @@
                                                 <li><a href="#"><i class="far fa-star"></i></a></li>
                                             </ul>
                                         </div>
-                                        <h2 class="product-title"><a th:href="@{/shop/detail/{id}(id=${product3.id})}" th:text="${product3  .name}"></a></h2>
+                                        <h2 class="product-title"><a th:href="@{/shop/detail/{id}(id=${product3.id})}"
+                                                                     th:text="${product3  .name}"></a></h2>
                                         <div class="product-price">
                                                 <span><span
                                                         th:text="${#numbers.formatDecimal(product3.price, 0, 'COMMA', 0, 'POINT')}"></span> VNĐ</span>

@@ -98,146 +98,46 @@
                                         <img src="assets/images/banner/banner-small.jpg" alt="">
                                     </a>
                                     <a href="profile.html" class="profile-thumb-2">
-                                        <img th:unless="${post.user.avatarImagePath}" class="rounded-avatar"
+                                        <img th:unless="${event.organizer.avatarImagePath}" class="rounded-avatar"
                                              alt="avatar-image"
                                              src="/client_assets/images/davatar.png"/>
-                                        <img th:if="${post.user.avatarImagePath}" class="rounded-avatar"
+                                        <img th:if="${event.organizer.avatarImagePath}" class="rounded-avatar"
                                              alt="avatar-image"
-                                             th:src="@{${post.user.avatarImagePath}}"/>
+                                             th:src="@{${event.organizer.avatarImagePath}}"/>
                                     </a>
                                 </figure>
                                 <div class="profile-desc text-center">
-                                    <h6 class="author"><a th:href="@{'/profile/' +${post.user.id}}"
-                                                          th:text="${post.user.fullName}"></a></h6>
-                                    <p th:text="${post.user.userInfo.otherInfo}"></p>
+                                    <h6 class="author"><a th:href="@{'/profile/' +${event.organizer.id}}"
+                                                          th:text="${event.organizer.fullName}"></a></h6>
+                                    <p th:text="${event.organizer.userInfo.otherInfo}"></p>
                                 </div>
                             </div>
-                        </div>
-                        <input type="hidden" id="postID" th:value="${post.id}">
-                        <div class="card widget-item">
-                            <h4 class="widget-title" style="font-size: 15px;">Bình luận</h4>
-                            <div id="commentContainer">
-                                <th:block th:each="comment :${post.comments}">
-                            <div class="unorder-list mgb" style="background-color: #f0f2f5; border-radius: 5px;padding: 7px;">
-                                <!-- profile picture end -->
-                                <div class="profile-thumb">
-                                    <a th:href="@{'/profile/' +${comment.user.id}}">
-                                        <figure class="profile-thumb-small">
-                                            <img th:unless="${comment.user.avatarImagePath}" alt="avatar-image"
-                                                 src="/client_assets/images/davatar.png"/>
-                                            <img th:if="${comment.user.avatarImagePath}" alt="avatar-image"
-                                                 th:src="@{${comment.user.avatarImagePath}}"/>
-                                        </figure>
-                                    </a>
-                                </div>
-                                <!-- profile picture end -->
-
-                                <div class="unorder-list-info">
-                                    <h3 class="list-title"><a href="#" th:text="${comment.user.fullName}"></a></h3>
-                                    <p class="list-subtitle" th:text="${comment.comment}"></p>
-                                </div>
-                            </div>
-                                </th:block>
-                            </div>
-
-                            <div class="comment-container">
-                                <textarea id="comment" class="comment" placeholder="Thêm bình luận"></textarea>
-
-                                <button onclick="commentPost()" id="submitComment" name="buttonComment" type="submit" title="Gửi" class="text-cookpad-gray-400 pr-rg" data-submit-focuser-target="submit" data-toggle-submit-target="submit" data-disable-input-target="submitButton">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" class="text-cookpad-24 mise-icon mise-icon-send"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m7 12-4 8 18-8L3 4l4 8Zm0 0h5"></path></svg>
-                                </button>
-                            </div>
-                            </button>
                         </div>
                     </aside>
                 </div>
-                <script>
-                    function commentPost() {
-                        const comment = document.querySelector('#comment').value.trim(); // Lấy giá trị và loại bỏ khoảng trắng đầu cuối
-                        const postID = document.querySelector('#postID').value;
-                        if (comment === "") {
-                            alert("Vui lòng nhập bình luận trước khi gửi.");
-                            return; // Không thực hiện AJAX request nếu textarea trống
-                        }
-                        $.ajax({
-                            url: '/api/comment',
-                            type: 'GET',
-                            data: {comment: comment, postID: postID},
-                            success: function (comment) {
-                                const container = document.querySelector('#commentContainer');
-                                const commentNode = `  <div class="unorder-list mgb" style="background-color: #f0f2f5; border-radius: 5px;padding: 7px;">
-                                <!-- profile picture end -->
-                                <div class="profile-thumb">
-                                    <a href="/profile/${comment.user.id}}">
-
-                                        <figure class="profile-thumb-small">
-    <img alt="avatar-image" src="${comment.user.avatarImagePath ? comment.user.avatarImagePath : '/client_assets/images/davatar.png'}"/>
-</figure>
-
-                                    </a>
-                                </div>
-                                <!-- profile picture end -->
-
-                                <div class="unorder-list-info">
-                                    <h3 class="list-title"><a href="#">${comment.user.fullName}</a></h3>
-                                    <p class="list-subtitle">${comment.comment}</p>
-                                </div>
-                            </div>`;
-                                container.innerHTML += commentNode;
-                                comment.value ='';
-                            },
-                            error: function (error) {
-                                console.log('Error:', error);
-                            }
-                        });
-                    }
-                </script>
                 <div class="col-lg-6 order-1 order-lg-2">
                     <div class="card">
                         <div class="form-group row">
-                            <h4 class="widget-title" style="margin-bottom: 20px" th:text="${post.foodName}"></h4>
-                            <div style="display: flex">
-                            <p style="
-    margin-left: 20px;
-    margin-right: 40px;
-"><i class="flaticon-user"></i> [[${post.serving_size}]]</p>
-                            <p><i class="bi bi-alarm-clock"></i> [[${post.cookingTime}]]</p>
+                            <h4 class="widget-title" style="margin-bottom: 20px" th:text="${event.event_name}"></h4>
+                            <div>
+                                <p><i class="bi bi-pencil"></i> [[${event.event_description}]]</p>
                             </div>
-                            <p><i class="bi bi-pen"></i>[[${post.description}]]</p>
                             <div
                                     style="max-width: 100%; max-height: 100%; margin-top: 10px;">
-                                <img th:src="@{${post.postImagePath}}" alt="image-preview"/>
+                                <img th:src="@{${event.eventImagePath}}" alt="image-preview"/>
                             </div>
                         </div>
                     </div>
 
                     <div class="card" id="ingredientContainer">
-                        <h4 class="widget-title">Nguyên liệu gồm có</h4>
-                        <th:block th:each="ingredient : ${post.ingredients}">
+                        <h4 class="widget-title">Nguyên Liệu Yêu Cầu</h4>
                             <div class="form-group mgb">
-                                <label class="form-control" th:text="${ingredient.ingredientName}"></label>
+                                <label class="form-control" th:text="${event.event_ingredient.productid.name}"></label>
+                                <img
+                                     alt="avatar-image"
+                                     th:src="@{'/product-images/'+${event.event_ingredient.productid.id}+'/' +${event.event_ingredient.productid.img}}"/>
                             </div>
-                        </th:block>
                     </div>
-                    <div class="card" id="stepContainer">
-                        <h4 class="widget-title">Các Bước Thực Hiện</h4>
-                        <th:block th:each="step : ${post.steps}">
-                            <div class="form-group mgb">
-                                <h6 style="font-style: italic; font-weight: bold" th:text="'Bước '+${step.stepNumber}"></h6>
-                                <p class="post-desc mgt mgb" style="font-size: 17px;" th:text="${step.stepDescription}">
-                                </p>
-                                <div class="mgt">
-                                    <div
-                                            style="max-width: 100%; max-height: 100%;margin-top: 10px;">
-                                        <img class="rounded-avatar"
-                                             alt="avatar-image"
-                                             th:src="@{'/steps-images/' + ${step.recipe.id} + '/' + ${step.stepImagePath}}"/>
-                                    </div>
-                                </div>
-                            </div>
-                        </th:block>
-                    </div>
-
                     </form>
                 </div>
                 <div class="col-lg-3 order-3">
@@ -261,7 +161,7 @@
                                                         <div class="row">
                                                             <div class="col-12">
                                                                 <div style="height: 500px" class="modal-product-info">
-                                                                        <h5><a href="#">Danh sách sản phẩm</a></h5>
+                                                                    <h5><a href="#">Danh sách sản phẩm</a></h5>
                                                                     <div style="margin: 5px 0">
                                                                         <select class="" name="productID">
                                                                             <option th:each="product: ${products}" th:value="${product.id}"
@@ -269,9 +169,9 @@
                                                                         </select>
                                                                     </div>
                                                                     <div class="btn-wrapper">
-                                                                            <a style="margin-left: 5px" data-bs-dismiss="modal" aria-label="Close" class="theme-btn-1 btn btn-effect-1">Huỷ</a>
-                                                                            <button style="border: none" ype="submit"
-                                                                               class="theme-btn-2 btn btn-effect-2">Xác nhận</button>
+                                                                        <a style="margin-left: 5px" data-bs-dismiss="modal" aria-label="Close" class="theme-btn-1 btn btn-effect-1">Huỷ</a>
+                                                                        <button style="border: none" ype="submit"
+                                                                                class="theme-btn-2 btn btn-effect-2">Xác nhận</button>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -292,16 +192,16 @@
                                             <ul>
                                                 <li class="sale-badge">New</li>
                                             </ul>
-                                          </div>
+                                        </div>
                                         <div class="product-hover-action">
                                             <ul>
-<!--                                                <li>-->
-<!--                                                    <a href="#" title="Quick View" data-bs-toggle="modal"-->
-<!--                                                       data-bs-target="#quick_view_modal"-->
-<!--                                                       th:onclick="'quickView(\'' + ${product1.id} + '\')'">-->
-<!--                                                        <i class="far fa-eye"></i>-->
-<!--                                                    </a>-->
-<!--                                                </li>-->
+                                                <!--                                                <li>-->
+                                                <!--                                                    <a href="#" title="Quick View" data-bs-toggle="modal"-->
+                                                <!--                                                       data-bs-target="#quick_view_modal"-->
+                                                <!--                                                       th:onclick="'quickView(\'' + ${product1.id} + '\')'">-->
+                                                <!--                                                        <i class="far fa-eye"></i>-->
+                                                <!--                                                    </a>-->
+                                                <!--                                                </li>-->
                                                 <li>
                                                     <a href="#" data-bs-toggle="modal" data-bs-target="#add_to_cart_modal"
                                                        th:onclick="'addToCart(\'' + ${product1.id} + '\')'" title="Add to Cart">
@@ -383,13 +283,13 @@
                                         </div>
                                         <div class="product-hover-action">
                                             <ul>
-<!--                                                <li>-->
-<!--                                                    <a href="#" title="Quick View" data-bs-toggle="modal"-->
-<!--                                                       data-bs-target="#quick_view_modal"-->
-<!--                                                       th:onclick="'quickView(\'' + ${product2.id} + '\')'">-->
-<!--                                                        <i class="far fa-eye"></i>-->
-<!--                                                    </a>-->
-<!--                                                </li>-->
+                                                <!--                                                <li>-->
+                                                <!--                                                    <a href="#" title="Quick View" data-bs-toggle="modal"-->
+                                                <!--                                                       data-bs-target="#quick_view_modal"-->
+                                                <!--                                                       th:onclick="'quickView(\'' + ${product2.id} + '\')'">-->
+                                                <!--                                                        <i class="far fa-eye"></i>-->
+                                                <!--                                                    </a>-->
+                                                <!--                                                </li>-->
                                                 <li>
                                                     <a href="#" data-bs-toggle="modal" data-bs-target="#add_to_cart_modal"
                                                        th:onclick="'addToCart(\'' + ${product2.id} + '\')'" title="Add to Cart">
@@ -472,13 +372,13 @@
                                         </div>
                                         <div class="product-hover-action">
                                             <ul>
-<!--                                                <li>-->
-<!--                                                    <a href="#" title="Quick View" data-bs-toggle="modal"-->
-<!--                                                       data-bs-target="#quick_view_modal"-->
-<!--                                                       th:onclick="'quickView(\'' + ${product3.id} + '\')'">-->
-<!--                                                        <i class="far fa-eye"></i>-->
-<!--                                                    </a>-->
-<!--                                                </li>-->
+                                                <!--                                                <li>-->
+                                                <!--                                                    <a href="#" title="Quick View" data-bs-toggle="modal"-->
+                                                <!--                                                       data-bs-target="#quick_view_modal"-->
+                                                <!--                                                       th:onclick="'quickView(\'' + ${product3.id} + '\')'">-->
+                                                <!--                                                        <i class="far fa-eye"></i>-->
+                                                <!--                                                    </a>-->
+                                                <!--                                                </li>-->
                                                 <li>
                                                     <a href="#" data-bs-toggle="modal" data-bs-target="#add_to_cart_modal"
                                                        th:onclick="'addToCart(\'' + ${product3.id} + '\')'" title="Add to Cart">
@@ -498,7 +398,7 @@
                                                 <li><a href="#"><i class="far fa-star"></i></a></li>
                                             </ul>
                                         </div>
-                                        <h2 class="product-title"><a th:href="@{/shop/detail/{id}(id=${product3.id})}" th:text="${product3  .name}"></a></h2>
+                                        <h2 class="product-title"><a th:href="@{/shop/detail/{id}(id=${product3.id})}" th:text="${product3.name}"></a></h2>
                                         <div class="product-price">
                                                 <span><span
                                                         th:text="${#numbers.formatDecimal(product3.price, 0, 'COMMA', 0, 'POINT')}"></span> VNĐ</span>
@@ -515,8 +415,8 @@
     </div>
     <script th:src="@{/webjars/jquery/3.6.4/jquery.min.js}"></script>
     <script th:src="@{/client_assets/shop_assets/js/cart.js}"></script>
-<!--    &lt;!&ndash; All JS Plugins &ndash;&gt;-->
-<!--    <script th:src="@{/client_assets/shop_assets/js/plugins.js}"></script>-->
+    <!--    &lt;!&ndash; All JS Plugins &ndash;&gt;-->
+    <!--    <script th:src="@{/client_assets/shop_assets/js/plugins.js}"></script>-->
     <!-- Main JS -->
     <script th:src="@{/client_assets/shop_assets/js/main.js}"></script>
 </div>

@@ -94,6 +94,6 @@ public class PostsService implements TableService{
     }
 
     public List<Users> getTop5User() {
-        return this.postsRepository.getTop5User();
+        return this.postsRepository.getTop3User();
     }
 }

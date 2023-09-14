@@ -518,6 +518,40 @@
                                 </ul>
                             </div>
                         </div>
+                        <div class="card widget-item">
+                            <h4 class="widget-title">Sự kiện</h4>
+                            <div class="widget-body">
+                                <ul class="like-page-list-wrapper">
+                                    <th:block th:each="event : ${events}">
+                                        <li class="unorder-list">
+                                            <!-- profile picture end -->
+                                            <div class="profile-thumb">
+                                                <a th:href="@{'/event-details/' +${event.id}}">
+                                                    <figure class="profile-thumb-small">
+                                                        <img th:src="@{${event.eventImagePath}}"
+                                                             alt="profile picture">
+                                                    </figure>
+                                                </a>
+                                            </div>
+                                            <!-- profile picture end -->
+
+                                            <div class="unorder-list-info">
+                                                <h3 class="list-title"><a th:href="@{'/post-details/' +${event.id}}"
+                                                                          th:text="${event.event_name}"></a></h3>
+                                            </div>
+                                          <!--  <p th:text="${post.likeCount}"
+                                               style="margin-top: 20px;margin-right: 5px;"></p>-->
+                                            <button class="like-button active">
+                                                <img class="heart" src="client_assets/images/icons/heart.png" alt="">
+                                                <img class="heart-color"
+                                                     src="client_assets/images/icons/heart-color.png"
+                                                     alt="">
+                                            </button>
+                                        </li>
+                                    </th:block>
+                                </ul>
+                            </div>
+                        </div>
                         <!-- widget single item end -->
                     </aside>
                 </div>
