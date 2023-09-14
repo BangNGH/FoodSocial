@@ -121,16 +121,18 @@
 
                             <!-- share content box start -->
                             <div class="friends-search share-content-box w-100">
-                                <form action="/search-post-by-ingredients" class="search-box share-text-box">
-                                    <input type="text" name="searchPost" class="share-text-field search-field" placeholder="Tìm món ăn hoặc nguyên liệu..." id="searchPost"></input>
-                                </form>
+                                <div>
+                                    <form action="/search-post-by-ingredients" class="search-box share-text-box">
+                                        <input style="position: relative" type="text" name="searchPost" class="share-text-field search-field" placeholder="Tìm món ăn hoặc nguyên liệu..." id="searchPost">
+                                        <a style="position: absolute; right: 10px; top: 10px" id="click_to_record" href="#"><i style="font-size: 20px" class='bx bxs-microphone'></i></a>
+                                        </input>
+                                    </form>
+                                </div>
                             </div>
                             <div style="position: relative">
                                 <p style="margin-top: 10px;margin-bottom: 0;font-style: italic;font-weight: bold">Gợi ý hôm nay</p>
                                 <div class="frnd-search-inner custom-scroll" style="margin: 0 0;background-color: #f1f1f1;border-radius: 30px;height: fit-content;padding-bottom: 20px;">
-                                    <ul id="searchPostLi" style="
-    margin-top: 20px;
-">
+                                    <ul id="searchPostLi" style="margin-top: 20px;">
                                     </ul>
                                 </div>
 
@@ -195,6 +197,31 @@
                                         }
                                     });
                                 }
+
+                                document.getElementById("click_to_record").addEventListener('click',function(){
+                                    var speech = true;
+                                    window.SpeechRecognition = window.webkitSpeechRecognition;
+                                    const recognition = new SpeechRecognition();
+                                    recognition.interimResults = true;
+
+                                    recognition.lang = 'vi-VN';
+
+                                    recognition.addEventListener('result', e => {
+                                        const transcript = Array.from(e.results)
+                                            .map(result => result[0])
+                                            .map(result => result.transcript)
+                                            .join('')
+
+                                        document.getElementById("searchPost").value = transcript;
+                                        fetchSearchResults(transcript.trim());
+                                        console.log(transcript);
+
+                                    });
+
+                                    if (speech == true) {
+                                        recognition.start();
+                                    }
+                                })
                             });
                             </script>
                         </div>
@@ -375,7 +402,7 @@
                         <!-- widget single item end -->
 
                         <!-- widget single item start -->
-                        <div th:object="${product1}" class="card widget-item">
+                        <div th:object="${product2}" class="card widget-item">
                             <h4 class="widget-title">Advertizement</h4>
                             <div class="widget-body">
                                 <div style="margin-bottom: 0px" class="ltn__product-item ltn__product-item-3 text-center">
@@ -480,6 +507,9 @@
             </div>
         </div>
     </div>
+    <script th:inline="javascript">
+
+    </script>
     <script th:src="@{/webjars/jquery/3.6.4/jquery.min.js}"></script>
     <script th:src="@{/client_assets/shop_assets/js/cart.js}"></script>
     <!-- All JS Plugins -->
