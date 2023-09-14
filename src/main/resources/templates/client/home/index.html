@@ -8,7 +8,6 @@
     <meta charset="UTF-8">
     <title>Trang chủ</title>
     <!-- Place favicon.png in the root directory -->
-    <link rel="shortcut icon" th:href="@{/client_assets/shop_assets/client_assets/shop_assets/img/favicon.png}" type="image/x-icon"/>
     <!-- Font Icons css -->
     <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/font-icons.css}">
     <!-- plugins css -->
@@ -35,25 +34,25 @@
                             <div class="widget-body">
                                 <ul class="like-page-list-wrapper">
                                     <th:block th:each="user : ${topUser}">
-                                    <li class="unorder-list">
-                                        <!-- profile picture end -->
-                                        <div class="profile-thumb">
-                                            <a th:href="@{'/profile/' +${user.id}}">
-                                                <figure class="profile-thumb-middle">
-                                                    <img th:unless="${user.avatarImagePath}" alt="avatar-image"
-                                                         src="/client_assets/images/davatar.png"/>
-                                                    <img th:if="${user.avatarImagePath}" alt="avatar-image"
-                                                         th:src="@{${user.avatarImagePath}}"/>
-                                                </figure>
-                                            </a>
-                                        </div>
-                                        <!-- profile picture end -->
+                                        <li class="unorder-list">
+                                            <!-- profile picture end -->
+                                            <div class="profile-thumb">
+                                                <a th:href="@{'/profile/' +${user.id}}">
+                                                    <figure class="profile-thumb-middle">
+                                                        <img th:unless="${user.avatarImagePath}" alt="avatar-image"
+                                                             src="/client_assets/images/davatar.png"/>
+                                                        <img th:if="${user.avatarImagePath}" alt="avatar-image"
+                                                             th:src="@{${user.avatarImagePath}}"/>
+                                                    </figure>
+                                                </a>
+                                            </div>
+                                            <!-- profile picture end -->
 
-                                        <div class="unorder-list-info">
-                                            <h3 class="list-title"><a th:href="@{'/profile/' +${user.id}}" th:text="${user.fullName}"></a></h3>
-                                            <p class="list-subtitle"><a th:text="${user.userInfo.otherInfo}"></a></p>
-                                        </div>
-                                    </li>
+                                            <div class="unorder-list-info">
+                                                <h3 class="list-title"><a th:href="@{'/profile/' +${user.id}}" th:text="${user.fullName}"></a></h3>
+                                                <p class="list-subtitle"><a th:text="${user.userInfo.otherInfo}"></a></p>
+                                            </div>
+                                        </li>
                                     </th:block>
                                 </ul>
                             </div>
@@ -117,13 +116,13 @@
                                 </button>
                             </a>
                         </div>
-                        <div sec:authorize="hasAnyAuthority('ADMIN')" class="card card-small" style="
+                        <div class="card card-small" style="
     max-width: fit-content;
     border-radius: 30px;
     margin: 0 auto;
     margin-bottom: 10px;
 ">
-                            <a href="/create-event" class="share-box-inner">
+                            <a sec:authorize="hasAnyAuthority('ADMIN')" href="/create-event" class="share-box-inner">
                                 <!-- share content box start -->
                                 <button class="share-content-box w-100" type="submit" style="text-align: center">
                                     <div class="share-text-box">
@@ -143,19 +142,18 @@
 
                             <!-- share content box start -->
                             <div class="friends-search share-content-box w-100">
-                                <form action="/search-post-by-ingredients" class="search-box share-text-box">
-                                    <input type="text" name="searchPost" class="share-text-field search-field"
-                                           placeholder="Tìm món ăn hoặc nguyên liệu..." id="searchPost"></input>
-                                </form>
+                                <div>
+                                    <form action="/search-post-by-ingredients" class="search-box share-text-box">
+                                        <input style="position: relative" type="text" name="searchPost" class="share-text-field search-field" placeholder="Tìm món ăn hoặc nguyên liệu..." id="searchPost">
+                                        <a style="position: absolute; cursor: pointer; right: 10px; top: 10px" id="click_to_record"><i style="font-size: 20px" class='bx bxs-microphone'></i></a>
+                                        </input>
+                                    </form>
+                                </div>
                             </div>
                             <div style="position: relative">
-                                <p style="margin-top: 10px;margin-bottom: 0;font-style: italic;font-weight: bold">Gợi ý
-                                    hôm nay</p>
-                                <div class="frnd-search-inner custom-scroll"
-                                     style="margin: 0 0;background-color: #f1f1f1;border-radius: 30px;height: fit-content;padding-bottom: 20px;">
-                                    <ul id="searchPostLi" style="
-    margin-top: 20px;
-">
+                                <p style="margin-top: 10px;margin-bottom: 0;font-style: italic;font-weight: bold">Gợi ý hôm nay</p>
+                                <div class="frnd-search-inner custom-scroll" style="margin: 0 0;background-color: #f1f1f1;border-radius: 30px;height: fit-content;padding-bottom: 20px;">
+                                    <ul id="searchPostLi" style="margin-top: 20px;">
                                     </ul>
                                 </div>
 
@@ -172,7 +170,6 @@
                                         fetchSearchResults(q);
 
                                     });
-
                                     function fetchSearchResults(q) {
                                         $.ajax({
                                             url: '/api/search',
@@ -221,6 +218,31 @@
                                             }
                                         });
                                     }
+
+                                    document.getElementById("click_to_record").addEventListener('click',function(){
+                                        var speech = true;
+                                        window.SpeechRecognition = window.webkitSpeechRecognition;
+                                        const recognition = new SpeechRecognition();
+                                        recognition.interimResults = true;
+
+                                        recognition.lang = 'vi-VN';
+
+                                        recognition.addEventListener('result', e => {
+                                            const transcript = Array.from(e.results)
+                                                .map(result => result[0])
+                                                .map(result => result.transcript)
+                                                .join('')
+
+                                            document.getElementById("searchPost").value = transcript;
+                                            fetchSearchResults(transcript.trim());
+                                            console.log(transcript);
+
+                                        });
+
+                                        if (speech == true) {
+                                            recognition.start();
+                                        }
+                                    })
                                 });
                             </script>
                         </div>
@@ -348,8 +370,7 @@
                                     <div class="post-settings arrow-shape">
                                         <ul>
                                             <li>
-                                                <button><a th:href="@{'/post-details/' +${post.id}}">Xem chi tiết</a>
-                                                </button>
+                                                <button><a th:href="@{'/post-details/' +${post.id}}">Xem chi tiết</a></button>
                                             </li>
                                         </ul>
                                     </div>
@@ -357,8 +378,7 @@
                             </div>
                             <!-- post title start -->
                             <div class="post-content">
-                                <h4 class="widget-title text-center" style="margin-bottom: 17px;margin-top: 17px;"
-                                    th:text="${post.foodName}"></h4>
+                                <h4 class="widget-title text-center" style="margin-bottom: 17px;margin-top: 17px;" th:text="${post.foodName}"></h4>
                                 <p class="post-desc" th:text="${post.description}">
                                 </p>
                                 <div class="post-thumb-gallery img-gallery">
@@ -376,18 +396,12 @@
 
                                 <div class="post-meta">
                                     <!--button like post-->
-                                    <button class="post-meta-like" th:id="'likeBtn_' + ${post.id}"
-                                            style="position: relative;display: inline-block"
-                                            th:attr="onclick=|likePost('${post.id}')|">
-                                        <img class="heart" src="client_assets/images/icons/heart.png"
-                                             style="position: absolute;top: 0;left: 0;z-index: 1" alt="">
+                                    <button class="post-meta-like" th:id="'likeBtn_' + ${post.id}" style="position: relative;display: inline-block" th:attr="onclick=|likePost('${post.id}')|">
+                                        <img class="heart" src="client_assets/images/icons/heart.png" style="position: absolute;top: 0;left: 0;z-index: 1" alt="">
                                         <th:block th:each="like : ${post.likes}">
-                                            <img th:if="${like.user==user}" class="heart-color"
-                                                 style="position: absolute;top: 0;left: 0;z-index: 0"
-                                                 src="client_assets/images/icons/heart-color.png" alt="">
+                                            <img th:if="${like.user==user}" class="heart-color" style="position: absolute;top: 0;left: 0;z-index: 0" src="client_assets/images/icons/heart-color.png" alt="">
                                         </th:block>
-                                        <span style="margin-left: 20px;" th:id="'likeCount_' + ${post.id}"
-                                              th:text="${post.likeCount}"></span>
+                                        <span style="margin-left: 20px;" th:id="'likeCount_' + ${post.id}" th:text="${post.likeCount}"></span>
                                     </button>
                                     <script>
                                         function likePost(id) {
@@ -404,10 +418,10 @@
                                                         likeCount++;
                                                         likeCountSpan.innerText = likeCount.toString();
                                                         const liked = `<img class="heart-color" style="position: absolute;top: 0;left: 0;z-index: 0" src="client_assets/images/icons/heart-color.png" alt="">`;
-                                                        buttonLike.innerHTML += liked;
+                                                        buttonLike.innerHTML+=liked;
                                                     } else {
-                                                        const imgColor = buttonLike.querySelectorAll('.heart-color');
-                                                        for (let i = 0; i < imgColor.length; i++) {
+                                                        const imgColor =buttonLike.querySelectorAll('.heart-color');
+                                                        for (let i=0;i<imgColor.length;i++) {
                                                             buttonLike.removeChild(imgColor[i])
 
                                                         }
@@ -446,7 +460,7 @@
                     <aside class="widget-area">
                         <!-- widget single item start -->
                         <div th:object="${product1}" class="card widget-item">
-                            <h4 class="widget-title">Có thể bạn thích</h4>
+                            <h4 class="widget-title">Advertizement</h4>
                             <div class="widget-body">
                                 <div style="margin-bottom: 0px" class="ltn__product-item ltn__product-item-3 text-center">
                                     <div class="product-img">
