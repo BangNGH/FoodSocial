@@ -2,14 +2,12 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layouts/client_layout}"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
       lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Trang chủ</title>
     <!-- Place favicon.png in the root directory -->
-    <link rel="shortcut icon" th:href="@{/client_assets/shop_assets//client_assets/shop_assets/img/favicon.png}"
-          type="image/x-icon"/>
+    <link rel="shortcut icon" th:href="@{/client_assets/shop_assets//client_assets/shop_assets/img/favicon.png}" type="image/x-icon"/>
     <!-- Font Icons css -->
     <link rel="stylesheet" th:href="@{/client_assets/shop_assets/css/font-icons.css}">
     <!-- plugins css -->
@@ -36,27 +34,25 @@
                             <div class="widget-body">
                                 <ul class="like-page-list-wrapper">
                                     <th:block th:each="user : ${topUser}">
-                                        <li class="unorder-list">
-                                            <!-- profile picture end -->
-                                            <div class="profile-thumb">
-                                                <a th:href="@{'/profile/' +${user.id}}">
-                                                    <figure class="profile-thumb-middle">
-                                                        <img th:unless="${user.avatarImagePath}" alt="avatar-image"
-                                                             src="/client_assets/images/davatar.png"/>
-                                                        <img th:if="${user.avatarImagePath}" alt="avatar-image"
-                                                             th:src="@{${user.avatarImagePath}}"/>
-                                                    </figure>
-                                                </a>
-                                            </div>
-                                            <!-- profile picture end -->
+                                    <li class="unorder-list">
+                                        <!-- profile picture end -->
+                                        <div class="profile-thumb">
+                                            <a th:href="@{'/profile/' +${user.id}}">
+                                                <figure class="profile-thumb-middle">
+                                                    <img th:unless="${user.avatarImagePath}" alt="avatar-image"
+                                                         src="/client_assets/images/davatar.png"/>
+                                                    <img th:if="${user.avatarImagePath}" alt="avatar-image"
+                                                         th:src="@{${user.avatarImagePath}}"/>
+                                                </figure>
+                                            </a>
+                                        </div>
+                                        <!-- profile picture end -->
 
-                                            <div class="unorder-list-info">
-                                                <h3 class="list-title"><a th:href="@{'/profile/' +${user.id}}"
-                                                                          th:text="${user.fullName}"></a></h3>
-                                                <p class="list-subtitle"><a th:text="${user.userInfo.otherInfo}"></a>
-                                                </p>
-                                            </div>
-                                        </li>
+                                        <div class="unorder-list-info">
+                                            <h3 class="list-title"><a th:href="@{'/profile/' +${user.id}}" th:text="${user.fullName}"></a></h3>
+                                            <p class="list-subtitle"><a th:text="${user.userInfo.otherInfo}"></a></p>
+                                        </div>
+                                    </li>
                                     </th:block>
                                 </ul>
                             </div>
@@ -82,17 +78,13 @@
                                             <!-- profile picture end -->
 
                                             <div class="unorder-list-info">
-                                                <h3 class="list-title"><a th:href="@{'/post-details/' +${post.id}}"
-                                                                          th:text="${post.foodName}"></a></h3>
-                                                <p class="list-subtitle"><a th:href="@{'/profile/' +${post.user.id}}"
-                                                                            th:text="${post.user.fullName}"></a></p>
+                                                <h3 class="list-title"><a th:href="@{'/post-details/' +${post.id}}" th:text="${post.foodName}"></a></h3>
+                                                <p class="list-subtitle"><a th:href="@{'/profile/' +${post.user.id}}" th:text="${post.user.fullName}"></a></p>
                                             </div>
-                                            <p th:text="${post.likeCount}"
-                                               style="margin-top: 20px;margin-right: 5px;"></p>
+                                            <p th:text="${post.likeCount}" style="margin-top: 20px;margin-right: 5px;"></p>
                                             <button class="like-button active">
                                                 <img class="heart" src="client_assets/images/icons/heart.png" alt="">
-                                                <img class="heart-color"
-                                                     src="client_assets/images/icons/heart-color.png"
+                                                <img class="heart-color" src="client_assets/images/icons/heart-color.png"
                                                      alt="">
                                             </button>
                                         </li>
@@ -106,41 +98,20 @@
 
                 <div class="col-lg-6 order-1 order-lg-2">
                     <!-- share box start -->
-                    <div class="d-flex">
-                        <div class="card card-small" style="
+                    <div class="card card-small" style="
     max-width: fit-content;
     border-radius: 30px;
     margin: 0 auto;
     margin-bottom: 10px;
 ">
-                            <a href="/post" class="share-box-inner">
-                                <!-- share content box start -->
-                                <button class="share-content-box w-100" type="submit" style="text-align: center">
-                                    <div class="share-text-box">
-                                        <p class="btn-outline-dark"><i class="bi bi-bowl"
-                                                                       style="font-weight: bold;font-size: 20px;"></i>
-                                            Viết món ăn của bạn</p>
-                                    </div>
-                                </button>
-                            </a>
-                        </div>
-                        <div class="card card-small" style="
-    max-width: fit-content;
-    border-radius: 30px;
-    margin: 0 auto;
-    margin-bottom: 10px;
-">
-                            <a sec:authorize="hasAnyAuthority('ADMIN')" href="/create-event" class="share-box-inner">
-                                <!-- share content box start -->
-                                <button class="share-content-box w-100" type="submit" style="text-align: center">
-                                    <div class="share-text-box">
-                                        <p class="btn-outline-dark"><i class="bi bi-pencil"
-                                                                       style="font-weight: bold;font-size: 20px;"></i>Tổ
-                                            chức sự kiện</p>
-                                    </div>
-                                </button>
-                            </a>
-                        </div>
+                        <a href="/post" class="share-box-inner">
+                            <!-- share content box start -->
+                            <button class="share-content-box w-100" type="submit" style="text-align: center">
+                                <div class="share-text-box">
+                                    <p class="btn-outline-dark"><i class="bi bi-bowl" style="font-weight: bold;font-size: 20px;"></i> Viết món ăn của bạn</p>
+                                </div>
+                            </button>
+                        </a>
                     </div>
                     <div class="card card-small">
                         <div class="share-box-inner" style="display: block">
@@ -150,49 +121,47 @@
 
                             <!-- share content box start -->
                             <div class="friends-search share-content-box w-100">
-                                <form action="/search-post-by-ingredients" class="search-box share-text-box">
-                                    <input type="text" name="searchPost" class="share-text-field search-field"
-                                           placeholder="Tìm món ăn hoặc nguyên liệu..." id="searchPost"></input>
-                                </form>
+                                <div>
+                                    <form action="/search-post-by-ingredients" class="search-box share-text-box">
+                                        <input style="position: relative" type="text" name="searchPost" class="share-text-field search-field" placeholder="Tìm món ăn hoặc nguyên liệu..." id="searchPost">
+                                        <a style="position: absolute; right: 10px; top: 10px" id="click_to_record" href="#"><i style="font-size: 20px" class='bx bxs-microphone'></i></a>
+                                        </input>
+                                    </form>
+                                </div>
                             </div>
                             <div style="position: relative">
-                                <p style="margin-top: 10px;margin-bottom: 0;font-style: italic;font-weight: bold">Gợi ý
-                                    hôm nay</p>
-                                <div class="frnd-search-inner custom-scroll"
-                                     style="margin: 0 0;background-color: #f1f1f1;border-radius: 30px;height: fit-content;padding-bottom: 20px;">
-                                    <ul id="searchPostLi" style="
-    margin-top: 20px;
-">
+                                <p style="margin-top: 10px;margin-bottom: 0;font-style: italic;font-weight: bold">Gợi ý hôm nay</p>
+                                <div class="frnd-search-inner custom-scroll" style="margin: 0 0;background-color: #f1f1f1;border-radius: 30px;height: fit-content;padding-bottom: 20px;">
+                                    <ul id="searchPostLi" style="margin-top: 20px;">
                                     </ul>
                                 </div>
 
                             </div>
                             <!-- share content box end -->
                             <script type="application/javascript">
-                                $(document).ready(function () {
-                                    // Thực hiện AJAX ban đầu khi trang được tải
-                                    fetchSearchResults('');
+                            $(document).ready(function () {
+                                // Thực hiện AJAX ban đầu khi trang được tải
+                                fetchSearchResults('');
 
-                                    const searchInput = document.querySelector('#searchPost');
-                                    searchInput.addEventListener('keyup', (event) => {
-                                        const q = event.target.value.trim();
-                                        fetchSearchResults(q);
+                                const searchInput = document.querySelector('#searchPost');
+                                searchInput.addEventListener('keyup', (event) => {
+                                    const q = event.target.value.trim();
+                                    fetchSearchResults(q);
 
-                                    });
+                                });
+                                function fetchSearchResults(q) {
+                                    $.ajax({
+                                        url: '/api/search',
+                                        type: 'GET',
+                                        data: {q: q},
+                                        success: (data) => {
+                                            const searchRS = document.querySelector('#searchPostLi');
+                                            searchRS.innerHTML = ''; // Clear current table body
 
-                                    function fetchSearchResults(q) {
-                                        $.ajax({
-                                            url: '/api/search',
-                                            type: 'GET',
-                                            data: {q: q},
-                                            success: (data) => {
-                                                const searchRS = document.querySelector('#searchPostLi');
-                                                searchRS.innerHTML = ''; // Clear current table body
-
-                                                if (data.length > 0) {
-                                                    // Loop through the search results and add each user to the table
-                                                    data.forEach((post) => {
-                                                        const search = `
+                                            if (data.length > 0) {
+                                                // Loop through the search results and add each user to the table
+                                                data.forEach((post) => {
+                                                    const search = `
                                                     <li style="cursor: text;margin-bottom: 15px;" class="d-flex align-items-center profile-active">
                                             <!-- profile picture end -->
                                             <div class="profile-thumb">
@@ -212,115 +181,53 @@
                                             </div>
                                         </li>
                                                     `;
-                                                        searchRS.innerHTML += search;
-                                                    });
-                                                } else {
-                                                    // If there are no search results, display a message
-                                                    const noResultsRow = `
+                                                    searchRS.innerHTML += search;
+                                                });
+                                            } else {
+                                                // If there are no search results, display a message
+                                                const noResultsRow = `
 <p>Không tìm thấy kết quả</p>
   `;
-                                                    searchRS.innerHTML = noResultsRow;
-                                                }
-
-                                            },
-                                            error: (error) => {
-                                                console.log(error);
+                                                searchRS.innerHTML = noResultsRow;
                                             }
-                                        });
+
+                                        },
+                                        error: (error) => {
+                                            console.log(error);
+                                        }
+                                    });
+                                }
+
+                                document.getElementById("click_to_record").addEventListener('click',function(){
+                                    var speech = true;
+                                    window.SpeechRecognition = window.webkitSpeechRecognition;
+                                    const recognition = new SpeechRecognition();
+                                    recognition.interimResults = true;
+
+                                    recognition.lang = 'vi-VN';
+
+                                    recognition.addEventListener('result', e => {
+                                        const transcript = Array.from(e.results)
+                                            .map(result => result[0])
+                                            .map(result => result.transcript)
+                                            .join('')
+
+                                        document.getElementById("searchPost").value = transcript;
+                                        fetchSearchResults(transcript.trim());
+                                        console.log(transcript);
+
+                                    });
+
+                                    if (speech == true) {
+                                        recognition.start();
                                     }
-                                });
+                                })
+                            });
                             </script>
                         </div>
                     </div>
                     <!-- share box end -->
-                    <th:block th:if="${events}" th:each="event : ${events}">
-                        <!-- post status start -->
-                        <div class="card" style="border-radius: 10%;">
-                            <!-- post title start -->
-                            <div class="post-title d-flex align-items-center">
-                                <!-- profile picture end -->
-                                <div class="profile-thumb">
-                                    <a th:href="@{'/profile/' +${event.organizer.id}}">
-                                        <figure class="profile-thumb-small">
-                                            <img th:unless="${event.organizer.avatarImagePath}" alt="avatar-image"
-                                                 src="/client_assets/images/davatar.png"/>
-                                            <img th:if="${event.organizer.avatarImagePath}" alt="avatar-image"
-                                                 th:src="@{${event.organizer.avatarImagePath}}"/>
-                                        </figure>
-                                    </a>
-                                </div>
-                                <!-- profile picture end -->
 
-                                <div class="posted-author">
-                                    <h6 class="author"><a th:href="@{'/profile/' +${event.organizer.id}}"
-                                                          th:text="${event.organizer.fullName}"></a></h6>
-                                </div>
-                                <div class="product-badge">
-                                    <ul>
-                                        <p style="
-    border-radius: 50%;
-    background-color: #cf5252;
-    color: white;
-    margin-right: 200px;
-">New</p>
-                                    </ul>
-                                </div>
-                                <a class="post-settings-bar" th:href="@{'/event-details/' +${event.id}}">
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                    <div class="post-settings arrow-shape">
-                                        <ul>
-                                            <li>
-                                                <button><a th:href="@{'/event-details/' +${event.id}}">Xem chi tiết</a>
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </a>
-                            </div>
-                            <!-- post title start -->
-                            <div class="post-content">
-                                <h4 class="widget-title text-center" style="margin-bottom: 17px;margin-top: 17px;color: #ff7474"
-                                    th:text="${event.event_name}"></h4>
-                                <p class="post-desc" th:text="${event.event_description}">
-                                </p>
-                                <div class="post-thumb-gallery img-gallery">
-                                    <div class="row g-0">
-                                        <div class="">
-                                            <figure class="post-thumb">
-                                                <a class="gallery-selector"
-                                                   th:href="@{${event.eventImagePath}}">
-                                                    <img th:src="@{${event.eventImagePath}}" alt="post image">
-                                                </a>
-                                            </figure>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="post-meta">
-                                    <div th:unless="${event.participants.contains(user)}" class="btn-wrapper text-right text-end">
-                                        <a th:href="'/join-event/'+${user.id}+'/'+${event.id}" class="theme-btn-1 btn btn-effect-1">Tham gia ngay</a>
-                                    </div>
-                                    <div th:if="${event.participants.contains(user)}" class="btn-wrapper text-right text-end">
-                                        <a style="background-color: #318749" th:href="'/create-post-4event/'+${event.id}" class="theme-btn-1 btn btn-effect-1">Viết bài dự thi</a>
-                                    </div>
-                                    <!--  share - comments-->
-                                    <ul class="comment-share-meta">
-                                        <li>
-                                            <a th:href="@{'/event-details/' +${event.id}}" class="post-comment">
-                                                <i class="bi bi-chat-bubble"></i>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <button class="post-share">
-                                                <i class="bi bi-share"></i>
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </th:block>
                     <!-- share box end -->
                     <th:block th:if="${listPosts}" th:each="post : ${listPosts}">
                         <!-- post status start -->
@@ -355,8 +262,7 @@
                                     <div class="post-settings arrow-shape">
                                         <ul>
                                             <li>
-                                                <button><a th:href="@{'/post-details/' +${post.id}}">Xem chi tiết</a>
-                                                </button>
+                                                <button><a th:href="@{'/post-details/' +${post.id}}">Xem chi tiết</a></button>
                                             </li>
                                         </ul>
                                     </div>
@@ -364,8 +270,7 @@
                             </div>
                             <!-- post title start -->
                             <div class="post-content">
-                                <h4 class="widget-title text-center" style="margin-bottom: 17px;margin-top: 17px;"
-                                    th:text="${post.foodName}"></h4>
+                                <h4 class="widget-title text-center" style="margin-bottom: 17px;margin-top: 17px;" th:text="${post.foodName}"></h4>
                                 <p class="post-desc" th:text="${post.description}">
                                 </p>
                                 <div class="post-thumb-gallery img-gallery">
@@ -383,18 +288,12 @@
 
                                 <div class="post-meta">
                                     <!--button like post-->
-                                    <button class="post-meta-like" th:id="'likeBtn_' + ${post.id}"
-                                            style="position: relative;display: inline-block"
-                                            th:attr="onclick=|likePost('${post.id}')|">
-                                        <img class="heart" src="client_assets/images/icons/heart.png"
-                                             style="position: absolute;top: 0;left: 0;z-index: 1" alt="">
+                                    <button class="post-meta-like" th:id="'likeBtn_' + ${post.id}" style="position: relative;display: inline-block" th:attr="onclick=|likePost('${post.id}')|">
+                                        <img class="heart" src="client_assets/images/icons/heart.png" style="position: absolute;top: 0;left: 0;z-index: 1" alt="">
                                         <th:block th:each="like : ${post.likes}">
-                                            <img th:if="${like.user==user}" class="heart-color"
-                                                 style="position: absolute;top: 0;left: 0;z-index: 0"
-                                                 src="client_assets/images/icons/heart-color.png" alt="">
+                                            <img th:if="${like.user==user}" class="heart-color" style="position: absolute;top: 0;left: 0;z-index: 0" src="client_assets/images/icons/heart-color.png" alt="">
                                         </th:block>
-                                        <span style="margin-left: 20px;" th:id="'likeCount_' + ${post.id}"
-                                              th:text="${post.likeCount}"></span>
+                                            <span style="margin-left: 20px;" th:id="'likeCount_' + ${post.id}" th:text="${post.likeCount}"></span>
                                     </button>
                                     <script>
                                         function likePost(id) {
@@ -411,10 +310,10 @@
                                                         likeCount++;
                                                         likeCountSpan.innerText = likeCount.toString();
                                                         const liked = `<img class="heart-color" style="position: absolute;top: 0;left: 0;z-index: 0" src="client_assets/images/icons/heart-color.png" alt="">`;
-                                                        buttonLike.innerHTML += liked;
+                                                        buttonLike.innerHTML+=liked;
                                                     } else {
-                                                        const imgColor = buttonLike.querySelectorAll('.heart-color');
-                                                        for (let i = 0; i < imgColor.length; i++) {
+                                                        const imgColor =buttonLike.querySelectorAll('.heart-color');
+                                                        for (let i=0;i<imgColor.length;i++) {
                                                             buttonLike.removeChild(imgColor[i])
 
                                                         }
@@ -453,14 +352,11 @@
                     <aside class="widget-area">
                         <!-- widget single item start -->
                         <div th:object="${product1}" class="card widget-item">
-                            <h4 class="widget-title">Có thể bạn thích</h4>
+                            <h4 class="widget-title">Advertizement</h4>
                             <div class="widget-body">
-                                <div style="margin-bottom: 0px"
-                                     class="ltn__product-item ltn__product-item-3 text-center">
+                                <div style="margin-bottom: 0px" class="ltn__product-item ltn__product-item-3 text-center">
                                     <div class="product-img">
-                                        <a th:href="@{/shop/detail/{id}(id=${product1.id})}"><img style="z-index: unset"
-                                                                                                  th:src="@{${product1.imagesPath}}"
-                                                                                                  alt="#"></a>
+                                        <a th:href="@{/shop/detail/{id}(id=${product1.id})}"><img style="z-index: unset" th:src="@{${product1.imagesPath}}" alt="#"></a>
                                         <div class="product-badge">
                                             <ul>
                                                 <li class="sale-badge">New</li>
@@ -476,10 +372,8 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="#" data-bs-toggle="modal"
-                                                       data-bs-target="#add_to_cart_modal"
-                                                       th:onclick="'addToCart(\'' + ${product1.id} + '\')'"
-                                                       title="Add to Cart">
+                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#add_to_cart_modal"
+                                                       th:onclick="'addToCart(\'' + ${product1.id} + '\')'" title="Add to Cart">
                                                         <i class="fas fa-shopping-cart"></i>
                                                     </a>
                                                 </li>
@@ -496,8 +390,7 @@
                                                 <li><a href="#"><i class="far fa-star"></i></a></li>
                                             </ul>
                                         </div>
-                                        <h2 class="product-title"><a th:href="@{/shop/detail/{id}(id=${product1.id})}"
-                                                                     th:text="${product1.name}"></a></h2>
+                                        <h2 class="product-title"><a th:href="@{/shop/detail/{id}(id=${product1.id})}" th:text="${product1.name}"></a></h2>
                                         <div class="product-price">
                                                 <span><span
                                                         th:text="${#numbers.formatDecimal(product1.price, 0, 'COMMA', 0, 'POINT')}"></span> VNĐ</span>
@@ -509,15 +402,12 @@
                         <!-- widget single item end -->
 
                         <!-- widget single item start -->
-                        <div th:object="${product1}" class="card widget-item">
+                        <div th:object="${product2}" class="card widget-item">
                             <h4 class="widget-title">Advertizement</h4>
                             <div class="widget-body">
-                                <div style="margin-bottom: 0px"
-                                     class="ltn__product-item ltn__product-item-3 text-center">
+                                <div style="margin-bottom: 0px" class="ltn__product-item ltn__product-item-3 text-center">
                                     <div class="product-img">
-                                        <a th:href="@{/shop/detail/{id}(id=${product2.id})}"><img style="z-index: unset"
-                                                                                                  th:src="@{${product2.imagesPath}}"
-                                                                                                  alt="#"></a>
+                                        <a th:href="@{/shop/detail/{id}(id=${product2.id})}"><img style="z-index: unset" th:src="@{${product2.imagesPath}}" alt="#"></a>
                                         <div class="product-badge">
                                             <ul>
                                                 <li class="sale-badge">New</li>
@@ -533,10 +423,8 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="#" data-bs-toggle="modal"
-                                                       data-bs-target="#add_to_cart_modal"
-                                                       th:onclick="'addToCart(\'' + ${product2.id} + '\')'"
-                                                       title="Add to Cart">
+                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#add_to_cart_modal"
+                                                       th:onclick="'addToCart(\'' + ${product2.id} + '\')'" title="Add to Cart">
                                                         <i class="fas fa-shopping-cart"></i>
                                                     </a>
                                                 </li>
@@ -553,8 +441,7 @@
                                                 <li><a href="#"><i class="far fa-star"></i></a></li>
                                             </ul>
                                         </div>
-                                        <h2 class="product-title"><a th:href="@{/shop/detail/{id}(id=${product2.id})}"
-                                                                     th:text="${product2.name}"></a></h2>
+                                        <h2 class="product-title"><a th:href="@{/shop/detail/{id}(id=${product2.id})}" th:text="${product2.name}"></a></h2>
                                         <div class="product-price">
                                                 <span><span
                                                         th:text="${#numbers.formatDecimal(product2.price, 0, 'COMMA', 0, 'POINT')}"></span> VNĐ</span>
@@ -569,12 +456,9 @@
                         <div th:object="${product3}" class="card widget-item">
                             <h4 class="widget-title">Advertizement</h4>
                             <div class="widget-body">
-                                <div style="margin-bottom: 0px"
-                                     class="ltn__product-item ltn__product-item-3 text-center">
+                                <div style="margin-bottom: 0px" class="ltn__product-item ltn__product-item-3 text-center">
                                     <div class="product-img">
-                                        <a th:href="@{/shop/detail/{id}(id=${product3.id})}"><img style="z-index: unset"
-                                                                                                  th:src="@{${product3.imagesPath}}"
-                                                                                                  alt="#"></a>
+                                        <a th:href="@{/shop/detail/{id}(id=${product3.id})}"><img style="z-index: unset" th:src="@{${product3.imagesPath}}" alt="#"></a>
                                         <div class="product-badge">
                                             <ul>
                                                 <li class="sale-badge">New</li>
@@ -590,10 +474,8 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="#" data-bs-toggle="modal"
-                                                       data-bs-target="#add_to_cart_modal"
-                                                       th:onclick="'addToCart(\'' + ${product3.id} + '\')'"
-                                                       title="Add to Cart">
+                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#add_to_cart_modal"
+                                                       th:onclick="'addToCart(\'' + ${product3.id} + '\')'" title="Add to Cart">
                                                         <i class="fas fa-shopping-cart"></i>
                                                     </a>
                                                 </li>
@@ -610,8 +492,7 @@
                                                 <li><a href="#"><i class="far fa-star"></i></a></li>
                                             </ul>
                                         </div>
-                                        <h2 class="product-title"><a th:href="@{/shop/detail/{id}(id=${product3.id})}"
-                                                                     th:text="${product3  .name}"></a></h2>
+                                        <h2 class="product-title"><a th:href="@{/shop/detail/{id}(id=${product3.id})}" th:text="${product3  .name}"></a></h2>
                                         <div class="product-price">
                                                 <span><span
                                                         th:text="${#numbers.formatDecimal(product3.price, 0, 'COMMA', 0, 'POINT')}"></span> VNĐ</span>
@@ -626,6 +507,9 @@
             </div>
         </div>
     </div>
+    <script th:inline="javascript">
+
+    </script>
     <script th:src="@{/webjars/jquery/3.6.4/jquery.min.js}"></script>
     <script th:src="@{/client_assets/shop_assets/js/cart.js}"></script>
     <!-- All JS Plugins -->
