@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/client_layout}"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tạo sự kiện</title>
+    <style>
+
+        #thumbnailDiv {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .post {
+            top: 80px;
+            cursor: pointer;
+            height: 50px;
+            position: fixed;
+            right: 20px;
+            text-align: center;
+            width: 50px;
+            z-index: 9999;
+            -webkit-transition: 0.4s;
+            -o-transition: 0.4s;
+            transition: 0.4s;
+            border-radius: 50%;
+            background-color: #dc4734;
+            -webkit-box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+        }
+
+        .mgb {
+            margin-bottom: 15px;
+        }
+
+        .mgt {
+            margin-top: 15px;
+        }
+
+        /* CSS cho hình ảnh xem trước */
+        #thumbnail {
+            width: 100%; /* Đảm bảo hình ảnh chiếm toàn bộ chiều rộng của thẻ */
+            height: auto; /* Tự động tính toán chiều cao để duy trì tỷ lệ khung hình ban đầu */
+        }
+    </style>
+
+</head>
+<body>
+<div layout:fragment="content">
+
+
+    <div class="main-wrapper pt-80">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 offset-lg-3">
+                    <form th:action="@{/create-event}" th:object="${event}" method="post"
+                          enctype="multipart/form-data">
+                        <input type="hidden" th:field="*{id}">
+                        <input type="hidden" id="numberOfImagesInput" name="numberOfImages" value="0">
+                        <div class="card">
+                            <div class="form-group row">
+                                <h4 class="widget-title">Hình ảnh banner cho sự kiện này</h4>
+                                <input type="file" required name="imageFile" id="imageFile" accept=".png, .jpg, .jpeg"
+                                       class="form-control d-none"/>
+                                <label style="cursor: pointer;font-weight: bold;" for="imageFile"
+                                       class="col-form-label text-center"> <!-- Sử dụng lớp text-center ở đây -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none"
+                                         viewBox="0 0 20 20" class="loading:hidden mise-icon mise-icon-camera">
+                                        <path stroke="currentColor" stroke-width="1.3"
+                                              d="M15 17.5H5a3.333 3.333 0 0 1-3.333-3.333v-7.5c0-.92.746-1.667 1.667-1.667h1.608c.557 0 1.077-.279 1.386-.742l.677-1.016c.31-.463.83-.742 1.387-.742h3.216c.557 0 1.078.279 1.387.742l.677 1.016c.31.463.83.742 1.387.742h1.608c.92 0 1.666.746 1.666 1.667v7.5A3.333 3.333 0 0 1 15 17.5Z"></path>
+                                        <circle cx="4.167" cy="7.5" r=".833" fill="currentColor" stroke="currentColor"
+                                                stroke-width=".1" transform="rotate(-180 4.167 7.5)"></circle>
+                                        <circle cx="10" cy="10.834" r="2.5" stroke="currentColor"
+                                                stroke-width="1.3"></circle>
+                                    </svg>
+                                    Chọn hình ảnh cho sự kiện
+                                </label>
+                                <div id="thumbnailDiv"
+                                     style="max-width: 100%; max-height: 100%; margin-top: 10px;">
+                                    <img id="thumbnail" alt="image-preview"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h4 class="widget-title">Tên sự kiện</h4>
+                            <div class="form-group mgb">
+                                <input type="text" id="foodName" required class="form-control"
+                                       placeholder="Đặt tên cho sự kiện này" th:field="*{event_name}">
+                            </div>
+                            <div class="form-group mgb">
+                                <textarea id="description" required class="form-control"
+                                          placeholder="Viết mô tả về sự kiện"
+                                          th:field="*{event_description}"></textarea>
+                            </div>
+                            <div class="form-group row mgb">
+                                <label class="col-form-label col-sm-3">Ngày tổ chức:</label>
+                                <div class="col-sm-9">
+                                    <input type="datetime-local" id="startTime" class="form-control" required name="startdate">
+                                </div>
+                            </div>
+                            <input type="hidden" id="formattedSDateTime" name="formattedSDateTime" value="">
+                            <div class="form-group row mgb">
+                                <label class="col-form-label col-sm-3">Ngày hết hạn:</label>
+                                <div class="col-sm-9">
+                                    <input type="datetime-local" class="form-control" required id="endTime" name="enddate">
+                                </div>
+                            </div>
+                            <input type="hidden" id="formattedDateTime" name="formattedDateTime" value="">
+                        </div>
+                        <div class="card" id="ingredientContainer">
+                            <h4 class="widget-title">Chọn nguyên liệu chính cho bài thi</h4>
+                            <div id="tbody" class="mgb">
+                                <div class="form-group mgb">
+                                    <!-- Danh sách các nguyên liệu được chọn từ trong list có tên là products từ thẻ select-->
+                                    <select id="yourSelectId1">
+                                        <option value="">Chọn nguyên liệu</option>
+                                        <option th:each="product : ${products}" th:value="${product.id}"
+                                                th:text="${product.name}" th:data-id="${product.id}"
+                                                th:data-image="${product.img}"></option>
+                                    </select>
+                                    <img id="selectedImage1" style="display: none;" class="thumbnailShow" src=""
+                                         alt="Hình ảnh sản phẩm">
+                                </div>
+                            </div>
+
+                            <div class="form-group mgb" id="">
+                                <!-- Danh sách các nguyên liệu được chọn từ trong list có tên là products từ thẻ select-->
+                                <select id="yourSelectId">
+                                    <option value="">Chọn nguyên liệu</option>
+                                    <option th:each="product : ${products}" th:value="${product.id}"
+                                            th:text="${product.name}" th:data-id="${product.id}"
+                                            th:data-image="${product.img}"></option>
+                                </select>
+                                <img id="selectedImage" style="display: none;" class="thumbnailShow" src=""
+                                     alt="Hình ảnh sản phẩm">
+
+                            </div>
+
+                            <script>
+                                // JavaScript
+                                $(document).ready(function () {
+                                    $('#yourSelectId').change(function () {
+                                        var selectedImage = '/product-images/' + $(this).find(':selected').data('id') + '/' + $(this).find(':selected').data('image');
+                                        $('#selectedImage').attr('src', selectedImage);
+                                        $('.thumbnailShow').show();
+                                    });
+                                    $('#yourSelectId1').change(function () {
+                                        var selectedImage = '/product-images/' + $(this).find(':selected').data('id') + '/' + $(this).find(':selected').data('image');
+                                        $('#selectedImage1').attr('src', selectedImage);
+                                        $('.thumbnailShow').show();
+                                    });
+                                });
+
+                            </script>
+                            <button type="button" class="bi bi-plus" style="font-weight: bold;font-size: large"
+                                    id="addIngredientButton">
+                            </button>
+                        </div>
+
+                        <button type="submit" class="post ">
+                            <i style="line-height: 50px;
+    color: #fff;
+    font-size: 25px;" class="bi bi-tick"></i>
+
+                        </button>
+                        <p style="top:130px; right: 20px; height: 50px; font-weight: bold;color:black;z-index: 9999;position: fixed;">
+                            Đăng Bài</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/client_assets/js/addIngredient.js}"></script>
+    <script>
+        $(document).ready(function () {
+            var now = new Date();
+            var dateString02 = now.toISOString().slice(0, 10);
+
+            // Chuyển đổi thành chuỗi định dạng yyyy-mm-dd để có thể sử dụng cho input date
+            // Đặt giá trị của input "start-time" là thời gian hiện tại
+            document.getElementById('startTime').setAttribute('min', dateString02);
+            document.getElementById("startTime").value = dateString02;
+            const endTimeInput = document.querySelector('#endTime');
+            var numberOfImages = 0;
+            $('#imageFile').change(function () {
+                showImageThumbnail(this);
+            });
+
+
+            function showImageThumbnail(inputFile) {
+                file = inputFile.files[0];
+                reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#thumbnail').attr('src', e.target.result);
+                    $('#thumbnailDiv').show();
+                };
+
+                reader.readAsDataURL(file);
+            }
+
+            function updateEndTime() {
+                const startTimeValue = document.getElementById("startTime").value;
+                document.getElementById('endTime').setAttribute('min', startTimeValue);
+                document.getElementById("endTime").value = startTimeValue;
+            }
+
+            const startTimeInput = document.querySelector('#startTime');
+            const inp = document.querySelector('#endTime');
+
+            startTimeInput.onchange = () => {
+                // Lấy giá trị từ input datetime-local
+                const dateTimeSLocalValue = document.getElementById('startTime').value;
+
+// Chuyển đổi định dạng từ "yyyy-MM-ddTHH:mm" sang "yyyy-MM-dd HH:mm"
+                const formattedSDateTime = dateTimeSLocalValue.replace('T', ' ');
+
+// Gán giá trị formattedDateTime vào trường ẩn
+                document.getElementById('formattedSDateTime').value = formattedSDateTime;
+                updateEndTime();
+            }
+            inp.onchange = () => {
+                // Lấy giá trị từ input datetime-local
+                const dateTimeLocalValue = document.getElementById('endTime').value;
+
+// Chuyển đổi định dạng từ "yyyy-MM-ddTHH:mm" sang "yyyy-MM-dd HH:mm"
+                const formattedDateTime = dateTimeLocalValue.replace('T', ' ');
+
+// Gán giá trị formattedDateTime vào trường ẩn
+                document.getElementById('formattedDateTime').value = formattedDateTime;
+            }
+        });
+    </script>
+</div>
+</body>
+</html>

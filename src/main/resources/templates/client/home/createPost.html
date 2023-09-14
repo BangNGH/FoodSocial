@@ -81,7 +81,9 @@
                                 </label>
                                 <div id="thumbnailDiv"
                                      style="max-width: 100%; max-height: 100%; margin-top: 10px;">
-                                    <img id="thumbnail" alt="image-preview" th:src="@{${recipe.postImagePath}}"/>
+                                    <img id="thumbnail" style="
+    border-radius: 6%;
+" alt="image-preview" th:src="@{${recipe.postImagePath}}"/>
                                 </div>
                             </div>
                         </div>
@@ -111,7 +113,7 @@
                                 </div>
                             </div>
                         </div>
-
+<input th:if="${event}" type="hidden" name="eventID" th:value="${event.id}">
                         <div class="card" id="ingredientContainer">
                             <h4 class="widget-title">Nguyên liệu</h4>
                             <div class="form-group mgb">
@@ -211,10 +213,6 @@
                                         })
                                     }
                                 );
-
-                                $('#uploadButton').click(function () {
-                                    $('#imageFile').click();
-                                });
 
                                 function showExImageThumbnail(inputFile, stepsIndex) {
                                     file = inputFile.files[0];

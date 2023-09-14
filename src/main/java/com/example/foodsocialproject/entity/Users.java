@@ -87,6 +87,15 @@ public class Users {
     @JsonIgnore
     private List<Comment> comments;
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    @JoinTable(
+            name = "event_participants",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id")
+    )
+    private Set<Events> events = new HashSet<>();
+
     @Transient
     public String getAvatarImagePath() {
         if (id == null||avatarUrl==null) {

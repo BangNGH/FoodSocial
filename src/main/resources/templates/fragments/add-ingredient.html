@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+    <div th:fragment="addIngredient" class="form-group mgb">
+        <!-- Danh sách các nguyên liệu được chọn từ trong list có tên là products từ thẻ select-->
+        <select>
+            <option value="">Chọn thêm liệu</option>
+            <option th:each="product : ${products}" th:name="'ingredients['+${index}+'].name'" th:value="${product.id}" th:text="${product.name}"></option>
+        </select>
+    </div>
+</body>
+</html>

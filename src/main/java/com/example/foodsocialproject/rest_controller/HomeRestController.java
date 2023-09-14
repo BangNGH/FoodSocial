@@ -5,7 +5,9 @@ import com.example.foodsocialproject.services.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +20,7 @@ public class HomeRestController {
     private final LikesService likeService;
     private final CommentService commentService;
     private final UserRelaService userRelaService;
-
+    private final ProductService productService;
     @GetMapping("/like")
     @ResponseBody
     public Boolean likePost(@RequestParam("id") String id, final HttpServletRequest request) {
@@ -108,4 +110,16 @@ public class HomeRestController {
 
         return commentService.save(comment, post, user);
     }
+
+    @GetMapping("/add-ingredient")
+    public ModelAndView searchBookingBills(@RequestParam("index") Integer index) {
+        List<Product> products = productService.getList();
+        ModelAndView modelAndView = new ModelAndView("fragments/add-ingredient");
+        modelAndView.addObject("products", products);
+        modelAndView.addObject("index", index);
+        return modelAndView;
+    }
+
+
+
 }

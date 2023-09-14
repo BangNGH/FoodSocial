@@ -3,13 +3,12 @@ package com.example.foodsocialproject.controller.client;
 import com.example.foodsocialproject.daos.FileUploadUtil;
 import com.example.foodsocialproject.entity.*;
 import com.example.foodsocialproject.exception.ResourceNotFoundException;
-import com.example.foodsocialproject.services.PostsService;
-import com.example.foodsocialproject.services.ProductService;
-import com.example.foodsocialproject.services.UserInfoService;
-import com.example.foodsocialproject.services.UserServices;
+import com.example.foodsocialproject.repository.EventRepository;
+import com.example.foodsocialproject.services.*;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -20,10 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -34,11 +30,78 @@ public class HomeController {
     private final PostsService postsService;
     private final UserInfoService userInfoService;
     private final ProductService productService;
+    private final EventService eventService;
+    private final EventParticipantService event_participantService;
 
+    @GetMapping("/create-post-4event/{eventID}")
+    public String createPostEvent(@PathVariable("eventID")UUID eventID,Model model, Principal p){
+        Events event = eventService.getEvent(eventID);
+        Posts recipe = new Posts();
+        String userEmail = p.getName();
+        Users foundUser = userService.findbyEmail(userEmail).get();
+        EventParticipants newParticip = event_participantService.findEventParticipants(eventID, foundUser);
+        if(newParticip.getPost()!=null){
+            return "redirect:/post-details/"+newParticip.getPost().getId();
+        }
+        model.addAttribute("user",foundUser);
+        model.addAttribute("recipe",recipe);
+        model.addAttribute("event",event);
+        return "client/home/createPost";
+    }
+
+    @GetMapping("/create-event")
+    public String createEvent(Model model, Principal p){
+        List<Product> products = productService.getList();
+        Events event = new Events();
+        model.addAttribute("event",event);
+        String userEmail = p.getName();
+        Users currentUser = userService.findbyEmail(userEmail).get();
+        model.addAttribute("user",currentUser);
+        model.addAttribute("products",products);
+
+        return "client/home/create_event";
+    }
+
+    @GetMapping("/join-event/{userid}/{eventid}")
+    public String joinEvent(@PathVariable("userid")UUID userid,@PathVariable("eventid")UUID eventid, RedirectAttributes ra){
+        Users joinUser = userService.findById(userid);
+        Events event = eventService.getEvent(eventid);
+        event_participantService.saveRela(event, joinUser);
+        ra.addFlashAttribute("raMessage", "Bạn đã tham gia thành công");
+        return "redirect:/profile";
+    }
+
+    @PostMapping("/create-event")
+    public String createEvent(@Valid @ModelAttribute("event") Events event, BindingResult bindingResult, Principal p, Model model, RedirectAttributes ra, @RequestParam("imageFile") MultipartFile multipartFile,@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") @RequestParam("formattedDateTime") Date endTime,@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") @RequestParam("formattedSDateTime") Date startTime) throws IOException {
+        String userEmail = p.getName();
+        Users foundUser = userService.findbyEmail(userEmail).get();
+        if (bindingResult.hasErrors()) {
+            System.out.println("ERROR "+bindingResult.getAllErrors());
+            return "client/home/create_event";
+        }
+        String mainFileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+        event.setEvent_image(mainFileName);
+        event.setEnd_date(endTime);
+        event.setStart_date(startTime);
+        event.setOrganizer(foundUser);
+        Events savedEvents = eventService.saveEvent(event);
+
+        String eventUploadDir = "./event-images/" + savedEvents.getId();
+        FileUploadUtil.saveFile(eventUploadDir,multipartFile, mainFileName);
+
+        ra.addFlashAttribute("raMessage", "Đăng bài thành công");
+        model.addAttribute("user",foundUser);
+        model.addAttribute("userInfo",foundUser.getUserInfo());
+        model.addAttribute("listPosts",foundUser.getPosts());
+        return "redirect:/profile";
+    }
     @GetMapping("")
     public String index(Model model,Principal p){
         List<Posts> listPosts = postsService.getList().stream().sorted(Comparator.comparing(Posts::getCreatedAt,Comparator.reverseOrder())).collect(Collectors.toList());
         model.addAttribute("listPosts",listPosts);
+        List<Events> events = eventService.getList().stream().filter(event->event.getActived_event()==true).toList();
+        model.addAttribute("events",events);
+
         String userEmail = p.getName();
         Users foundUser = userService.findbyEmail(userEmail).get();
         model.addAttribute("user",foundUser);
@@ -58,6 +121,7 @@ public class HomeController {
         String userEmail = p.getName();
         Users foundUser = userService.findbyEmail(userEmail).get();
         model.addAttribute("user",foundUser);
+        model.addAttribute("event",false);
         return "client/home/createPost";
     }
     @GetMapping("/login")
@@ -100,6 +164,8 @@ public class HomeController {
        if (followerUser.getFollowing().contains(user)){
            model.addAttribute("follwed",true);
        }else model.addAttribute("follwed",false);
+        List<Events> myEvents = eventService.getList().stream().filter(e -> e.getParticipants().contains(user)).collect(Collectors.toList());;
+        model.addAttribute("myEvents",myEvents);
         return "client/home/profile";
     }
 
@@ -131,6 +197,8 @@ public class HomeController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        List<Events> myEvents = eventService.getList().stream().filter(e -> e.getParticipants().contains(foundUser)).collect(Collectors.toList());;
+        model.addAttribute("myEvents",myEvents);
         model.addAttribute("user",foundUser);
         model.addAttribute("userInfo",foundUser.getUserInfo());
         model.addAttribute("listPosts",foundUser.getPosts());
@@ -145,11 +213,12 @@ public class HomeController {
         String userEmail = p.getName();
         Users foundUser = userService.findbyEmail(userEmail).get();
         model.addAttribute("user",foundUser);
+        model.addAttribute("event",false);
         return "client/home/createPost";
     }
 
     @PostMapping("/createRecipe")
-    public String save(@Valid @ModelAttribute("recipe") Posts recipe, BindingResult bindingResult,Principal p, Model model, @RequestParam("numberOfImages") int numberOfImages, RedirectAttributes ra, @RequestParam("imageFile") MultipartFile multipartFile, @RequestParam("extraImage") MultipartFile[] extraMultipartFile ) throws IOException {
+    public String save(@Valid @ModelAttribute("recipe") Posts recipe, BindingResult bindingResult,Principal p, Model model, @RequestParam("numberOfImages") int numberOfImages, RedirectAttributes ra, @RequestParam("imageFile") MultipartFile multipartFile, @RequestParam("extraImage") MultipartFile[] extraMultipartFile , @RequestParam(value = "eventID", defaultValue = "false") String eventID) throws IOException {
         String userEmail = p.getName();
         Users foundUser = userService.findbyEmail(userEmail).get();
         if (bindingResult.hasErrors()) {
@@ -191,12 +260,17 @@ public class HomeController {
            FileUploadUtil.saveFile(stepUploadDir,extraMultiFile, fileName);
        }
 
+       if (!eventID.equals("false")){
+           System.out.println("EVENT ID: "+ eventID);
+           event_participantService.findEventParticipants(eventID, savedRecipe);
+           ra.addFlashAttribute("raMessage", "Đăng bài dự thi thành công");
+       }else
 
         ra.addFlashAttribute("raMessage", "Đăng bài thành công");
         model.addAttribute("user",foundUser);
         model.addAttribute("userInfo",foundUser.getUserInfo());
         model.addAttribute("listPosts",foundUser.getPosts());
-        return "client/home/profile";
+        return "redirect:/profile";
     }
 
     @GetMapping("/post-details/{id}")

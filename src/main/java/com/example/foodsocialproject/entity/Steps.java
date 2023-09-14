@@ -23,7 +23,7 @@ public class Steps {
     @Column(name = "step_number")
     private int stepNumber;
 
-    @Column(name = "step_description")
+    @Column(name = "step_description", length = 3000)
     private String stepDescription;
 
     @Column(name = "image")

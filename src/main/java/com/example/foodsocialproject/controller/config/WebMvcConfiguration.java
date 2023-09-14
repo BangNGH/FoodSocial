@@ -23,6 +23,10 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         String stepsUploadPath = stepsUploadDir.toFile().getAbsolutePath();
         registry.addResourceHandler("/steps-images/**").addResourceLocations("file:/"+stepsUploadPath+"/");
 
+        Path eventUploadDir = Paths.get("./event-images");
+        String eventUploadPath = eventUploadDir.toFile().getAbsolutePath();
+        registry.addResourceHandler("/event-images/**").addResourceLocations("file:/"+eventUploadPath+"/");
+
         exposeDirectory("product-images", registry);
     }
     private void exposeDirectory(String dirName, ResourceHandlerRegistry registry) {
