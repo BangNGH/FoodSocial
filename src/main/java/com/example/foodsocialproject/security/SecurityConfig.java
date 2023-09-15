@@ -69,7 +69,7 @@ public class SecurityConfig {
         return (request, response, authentication) -> {
             for (GrantedAuthority authority : authentication.getAuthorities()) {
                 if (authority.getAuthority().equals("ADMIN")) {
-                    response.sendRedirect("/admin");
+                    response.sendRedirect("/admin/product");
                     return;
                 }
             }

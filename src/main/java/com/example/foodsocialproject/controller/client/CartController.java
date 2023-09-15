@@ -205,7 +205,7 @@ public class CartController {
 
         //send sms
         String destinyPhone = (String) session.getAttribute("phone");
-      /* if (destinyPhone != null) {
+/*       if (destinyPhone != null) {
             if (validatePhoneNumber(destinyPhone)) {
                 Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
                 System.out.println("sms sending to "+ destinyPhone);
@@ -368,6 +368,13 @@ public class CartController {
     public String momoPaymentResult( @RequestParam("errorCode") String errorCode,HttpSession session,RedirectAttributes redirectAttributes
                                  ) throws MessagingException, UnsupportedEncodingException {
         if (errorCode.equals("0")) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String email = authentication.getName();
+            Users user = userServices.findbyEmail(email).orElseThrow();
+            //save
+            String note =(String)session.getAttribute("note");
+            String address = (String)session.getAttribute("address");
+            cartService.saveCart(session,note,address,user,"paypal", true);
         return checkoutSuccess(session,"Momo");}
         redirectAttributes.addFlashAttribute("message", "Có lỗi xảy ra khi thanh toán");
         return "redirect:/cart/checkout";
@@ -376,6 +383,13 @@ public class CartController {
     public String showResult(@RequestParam("vnp_ResponseCode") String responseCode, HttpSession session,RedirectAttributes redirectAttributes
     ) throws MessagingException, UnsupportedEncodingException {
         if (responseCode.equals("00")) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String email = authentication.getName();
+            Users user = userServices.findbyEmail(email).orElseThrow();
+            //save
+            String note =(String)session.getAttribute("note");
+            String address = (String)session.getAttribute("address");
+            cartService.saveCart(session,note,address,user,"paypal", true);
             return checkoutSuccess(session,"VNPay");
         }
         redirectAttributes.addFlashAttribute("message", "Có lỗi xảy ra khi thanh toán");
